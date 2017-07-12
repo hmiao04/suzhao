@@ -1,0 +1,62 @@
+{% extends 'layout.twig' %}
+{% block title %}我的商品{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title pull-left">我的商品</h3>
+            <a href="../goods/publish.html" target="publish-goods" class="pull-right">创建商品</a>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-bordered">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>商品名称</th>
+                        <th width="150">发起时间</th>
+                        <th width="80">商品价格</th>
+                        <th width="80">商品状态</th>
+                        <th width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in goodsList %}
+                        <tr>
+                            <td><img style="width: 80px;height:80px;" src="{{ res_url }}{{ a.main_goods_image }}?resize/h=100" alt=""></td>
+                            <td>
+                                <div>{{ a.title }}</div>
+                                <div class="goods-color" style="font-size: 12px;margin-top:5px;">
+                                    <span class="text-info">颜色:</span>
+                                    <span>{{ a.goods_color }}</span>
+                                </div>
+                            </td>
+                            <td>{{ a.create_time|date('Y-m-d H:i') }}</td>
+                            <td>{{ a.price_sale }}元</td>
+                            <td><span class="label {{ a.status == 1 ?'bg-success':'bg-info' }}">
+                        {{ a.status == 1 ?'上架':(a.status == 2?'下架':'删除') }}</span></td>
+                            <td>
+                                {% if a.status == 1 %}
+                                    <a href="../goods/disabled?id={{ a.id }}" class="ajax-post confirm">下架</a>
+                                {% else %}
+                                    <a href="../goods/enable?id={{ a.id }}" class="ajax-post confirm">上架</a>
+                                {% endif %}
+                                <a href="../goods/delete?id={{ a.id }}" class="ajax-post delete-link confirm">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="data-table-paginate">
+                    <div class="col-xs-6">
+                        <div class="data-table-info">总计 {{ totalPage }} 页  共 {{ totalCount }} 条记录</div>
+                    </div>
+                    <div class="col-xs-6">
+                        {{ pageString|raw }}
+                    </div>
+                    <br class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

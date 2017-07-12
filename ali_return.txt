@@ -1,0 +1,25 @@
+http://127.0.0.1/project/suzhao/pay/return.html?body=%E5%AE%9E%E5%9C%B0%E8%AE%A4%E8%AF%81%E6%89%8B%E7%BB%AD%E8%B4%B9&buyer_email=cheng%40love.xiaoyan.me&buyer_id=2088202200167123&exterface=create_direct_pay_by_user&extra_common_param=%7B%22bill_sn%22%3A%22201705011048110000813611%22%2C%22bill_data%22%3A%22%7B%5C%22title%5C%22%3A%5C%22%5C%5Cu5b9e%5C%5Cu5730%5C%5Cu8ba4%5C%5Cu8bc1%5C%5Cu624b%5C%5Cu7eed%5C%5Cu8d39%5C%22%2C%5C%22member_id%5C%22%3A%5C%228%5C%22%2C%5C%22company_id%5C%22%3A%5C%224%5C%22%2C%5C%22price%5C%22%3A0.01%7D%22%7D&is_success=T&notify_id=RqPnCoPT3K9%252Fvwbh3InYyj2kowk5EK5gMu539FqvoqmFEy2taBzFTphpXxKt%252FsbBqZLz&notify_time=2017-05-01+10%3A52%3A56&notify_type=trade_status_sync&out_trade_no=ALI2017050110522335830&payment_type=1&seller_email=2740793261%40qq.com&seller_id=2088712675008981&subject=%E5%AE%9E%E5%9C%B0%E8%AE%A4%E8%AF%81%E6%89%8B%E7%BB%AD%E8%B4%B9&total_fee=0.01&trade_no=2017050121001004120224927992&trade_status=TRADE_SUCCESS&sign=56e14d2f7fd71f3bc717492a8c6f8b2f&sign_type=MD5
+Array
+(
+    [body] => 测试团购呀 - AD高端职业装女装套装时尚气质正装白领西装西服套裙ol工作服春秋<br>参团单价:0.01<br>购买数量:1
+    [buyer_email] => cheng@love.xiaoyan.me
+    [buyer_id] => 2088202200167123
+    [exterface] => create_direct_pay_by_user
+    [extra_common_param] => {"title":"测试团购呀 - AD高端职业装女装套装时尚气质正装白领西装西服套裙ol工作服春秋","group_id":"2","join_time":1490523282,"price":"0.01","count":"1","remark":"bbbbbbbb"}
+    [is_success] => T
+    [notify_id] => RqPnCoPT3K9%2Fvwbh3InYydy2fNgWFX4Xfkt%2BJOyfb4iWFCWWhp6HVyXiWOAu3%2BqklnOJ
+    [notify_time] => 2017-03-26 20:02:41
+    [notify_type] => trade_status_sync
+    [out_trade_no] => ALI2017032607564509544
+    [payment_type] => 1
+    [seller_email] => 2740793261@qq.com
+    [seller_id] => 2088712675008981
+    [subject] => 参加团购-测试团购呀 - AD高端职业装女装套装时尚气质正装白领西装西服套裙ol工作服春秋
+    [total_fee] => 0.02
+    [trade_no] => 2017032621001004120267602846
+    [trade_status] => TRADE_SUCCESS
+    [sign] => 539a05d5bb25ce491d1ff33cdcec73bc
+    [sign_type] => MD5
+    [YCFS] => 58d7772bc309a
+    [PHPSESSID] => 58d7772bc309a
+)

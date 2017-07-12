@@ -1,0 +1,9 @@
+{% for pic in picture_list %}
+    <div class="col-xs-6 col-md-3">
+        <a href="#" class="thumbnail">
+            <img data-src="holder.js/100%x180" alt="100%x180"
+                 src="{{ res_url }}{{ pic.file_name }}"
+                 data-holder-rendered="true" style="height: 180px; width: 100%; display: block;">
+        </a>
+    </div>
+{% endfor %}

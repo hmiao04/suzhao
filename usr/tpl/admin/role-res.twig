@@ -1,0 +1,37 @@
+{% for r_t in resList %}
+    <dl class="checkmod">
+        <dt class="hd">
+            <label class="checkbox">
+                <input {{ r_t.checked?'checked="checked"':'' }}
+                        class="auth_rules rules_all check-all"
+                        data-target=".r_p_{{ r_t.id }}" type="checkbox" name="rules[]"
+                        value="{{ r_t.id }}">{{ r_t.res_name }}
+            </label>
+        </dt>
+        <dd class="bd clearfix">
+            {% for r_g in r_t.child %}
+                <div class="rule_check pull-left">
+                    <div>
+                        <label class="checkbox">
+                            <input {{ r_g.checked?'checked="checked"':'' }}
+                                    class="auth_rules rules_row r_p_{{ r_t.id }} check-all"
+                                    data-target=".r_p_{{ r_g.id }}" type="checkbox"
+                                    name="rules[]" value="{{ r_g.id }}">{{ r_g.res_name }}
+                        </label>
+                    </div>
+                    <span class="divsion">&nbsp;</span>
+                        <span class="child_row">
+                            {% for r in r_g.child %}
+                                <label class="checkbox" data-hasqtip="11" oldtitle="这是测试信息" title="">
+                                    <input {{ r.checked?'checked="checked"':'' }}
+                                            class="auth_rules r_p_{{ r_t.id }}  r_p_{{ r_g.id }}" type="checkbox"
+                                            name="rules[]" value="{{ r.id }}">{{ r.res_name }}
+                                </label>
+                            {% endfor %}
+                        </span>
+                </div>
+            {% endfor %}
+        </dd>
+    </dl>
+{% endfor %}
+<input type="hidden" name="id" value="{{ role.id }}"/>

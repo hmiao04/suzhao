@@ -1,0 +1,85 @@
+{% extends 'admin.twig' %}
+{% block title %}修改个人信息 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body" id="saveAdmin">
+                <form class="validate save-res" action="api/update-user" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="member-name">登录账号</label><span style="margin-left: 10px">{{ user.account }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-name">账号类型</label><span style="margin-left: 10px">{{ roleInfo.role_name }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-name">密码修改</label>
+                            <input type="text" name="pwd" class="form-control" placeholder="******">
+                        </div>
+                        <div class="form-group">
+                            <label>头像</label>
+                            <span id="the-image-up-w"
+                                  style="display: inline-block;position: relative;width: 150px;float: left;"></span>
+
+                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                <div class="fileinput-new thumbnail"
+                                     data-trigger="fileinput">
+                                    <img class="preview-img " src="{{ cdn }}/{{ user.avatar }}"/>
+                                </div>
+                                <div>
+                                    <div class="btn btn-default btn-file" style="margin-left: 50px;">
+                                        <span class="fileinput-new">选择图片</span>
+                                        <span class="fileinput-exists">更改</span>
+                                        <input type="file" data-icon="false" data-value="{{ user.avatar }}"
+                                               data-message-required="请选择头像图片"
+                                               error-label-wrapper="#the-image-up-w" name="avatar"
+                                               accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">
+                            <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block last_script %}
+    <script>
+        $(function(){
+
+            var frm = $('form.save-res');
+            frm.on('submit',function(){
+                if (frm.valid()) {
+                    var formData = new FormData(frm[0]);
+                    ycs.ajax({
+                        url : frm.attr('action'),
+                        type : 'POST',
+                        data : formData,
+                        dataType:'json',
+                        processData : false,
+                        contentType : false,
+                        success : function(ret) {
+                            if(ret['code'] == 0){
+                                location.reload();
+                            }else{
+                                alert(ret['message']);
+                            }
+                        },
+                        error : function(responseStr) {
+                            alert("失败:" + responseStr);
+                        }
+                    });
+                }
+                return false;
+            });
+        })
+    </script>
+{% endblock %}

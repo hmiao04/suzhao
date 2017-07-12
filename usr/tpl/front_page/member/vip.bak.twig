@@ -1,0 +1,45 @@
+{% extends 'layout.twig' %}
+{% block title %}会员中心{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">会员信息</h2>
+            </div>
+            <div class="panel-body" style="padding: 20px 0;">
+                {% if IS_VIP %}
+                    <div class="text-center">
+                        <h2>您当前已经是会员了</h2>
+                        <div>
+                            会员到期时间：<span>{{ MEMBER_INFO.vip_time }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <h2 class="">您还不是会员</h2>
+                        <a href="join-vip.html" target="_blank" class="btn btn-primary" style="width: 200px">开通会员</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">会员权益</h2>
+            </div>
+            <div class="panel-body" style="padding: 20px 0;">
+                <div class="col-md-6">
+                    <div class="alert alert-success" role="alert">查看商家联系电话</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-warning" role="alert">查看商家传真</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info" role="alert">查看商家QQ</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-danger" role="alert">查看商家地址</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends '../../page.layout.twig' %}
+{% block title %}{{ picture.picture_tag }} - 速找网{% endblock %}
+{% block block_class_name %}task{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="task-wrapper">
+            <div class="pull-left">
+                <img src="{{ res_url }}{{ picture.main_image }}?resize/w=400&x-oss-process=image/resize,m_fixed,w_400/format,webp" alt="">
+            </div>
+            <div class="task-detail">
+                <h1 class="task-title" style="margin-bottom:30px">
+                    <span>{{ picture.picture_tag }}</span>
+                </h1>
+
+                <div class="picture-info">
+                    <h3 class="text-info">{{ category.cate_name }}</h3>
+                    <div style="min-height: 103px;">
+                        <div class="picture-brief" style="background-color: #EFEFEF;padding: 7px 10px;margin: 10px 0;max-height: 100px;overflow: hidden;line-height: 22px;">
+                            {{ picture.picture_brief }}
+                        </div>
+                    </div>
+                    <div class="image-list">
+                        {% for img in picture.image_list %}
+                            <img src="{{ res_url }}{{ img }}?resize/w=400&x-oss-process=image/resize,m_fixed,w_200/format,webp" alt="">
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="task-control">
+                    <div class="controls">
+
+                    </div>
+                </div>
+            </div>
+            <br class="clear">
+
+            <div class="task-content">
+                <div class="content-title hidden">
+                    <span>需求描述</span>
+                </div>
+                <div>{{ picture.picture_content|raw }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-modal-wrapper">
+    </div>
+{% endblock %}
+{% block end_body %}
+{% endblock %}

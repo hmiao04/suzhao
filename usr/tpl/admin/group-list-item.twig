@@ -1,0 +1,41 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>团购标题</th>
+        <th>发起用户</th>
+        <th>团购商品</th>
+        <th>发起时间</th>
+        <th>团购状态</th>
+        <th width="240">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in gbList %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ a.title }}</td>
+            <td>{{ a.member_name }}</td>
+            <td>{{ a.goods_name }}</td>
+            <td>{{ a.create_time|date('Y-m-d H:i') }}</td>
+            <td><span class="label {{ a.group_status == 1 ?'bg-success':'bg-warning' }}" id="group_status_{{ a.id }}">
+                    {% if a.group_status == 1 %}进行中
+                    {% elseif a.group_status == 2 %}已被接
+                    {% elseif a.group_status == 3 %}已完结
+                    {% else %}未发起
+                    {% endif %}
+                </span></td>
+            <td>
+                <a href="##" class="ajax-load" data-url="tuan.info?id={{ a.id }}" data-modal-title="团购信息"
+                   data-mode="edit" data-toggle="modal" data-target="#modal-ajax">团购信息</a>
+                <a href="##" class="ajax-load" data-url="tuan.join?id={{ a.id }}" data-modal-title="参团信息"
+                   data-mode="edit" data-toggle="modal" data-target="#modal-ajax">参团信息</a>
+                <a href="##" class="ajax-load" data-url="tuan.jie?id={{ a.id }}" data-modal-title="接团信息"
+                   data-mode="edit" data-toggle="modal" data-target="#modal-ajax">接团信息</a>
+                <a href="cancel?id={{ a.id }}" class="ajax-post delete-link confirm">取消</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

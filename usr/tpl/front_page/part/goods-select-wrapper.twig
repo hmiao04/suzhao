@@ -1,0 +1,60 @@
+<div tabindex="-1" role="dialog" id="goods-list-search" class="modal" modal-window="" animate="animate"
+     data-backdrop="static">
+    <div class="modal-dialog modal-sm goods-list-search" style="margin-top: 5%;width:500px;">
+        <div class="modal-content" modal-transclude="">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">请选择要团购的商品</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" name="goods_name" class="search_key search-input form-control" placeholder="商品关键字">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" id="search-goods">
+                                    <i class="glyphicon glyphicon-search"></i></button>
+                            </span>
+                </div>
+                <div id="goods-list-wrapper"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript">
+    $(function () {
+        var default_url = '{{ SITE_URL }}/goods/search.simple',detail_url = '{{ SITE_URL }}/goods/detail.html';
+        var glw = $('#goods-list-wrapper'), w = $('#goods-list-search'),
+                ldt = '<div class="text-center" style="padding: 10px;"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> &nbsp;' +
+                        '<span class="loadingText">处理中，请稍候...</span></div>',
+                lde ='<div class="text-center" style="padding: 10px;"><span class="loadingText">加载数据失败!</span></div>';
+        var loadingData = function(url,data){
+            glw.html(ldt);
+            $.get(url,data,function(s){glw.html(s);},'text').error(function(){glw.html(lde);});
+        };
+        w.on('show.bs.modal', function () {
+            loadingData(default_url,{});
+        });
+        glw.on('click', 'li.media', function () {
+            w.modal('hide');
+            modalLoading.show();
+            var gid = $(this).attr('data-goods-id');
+            $.get(detail_url + '?id=' + gid,function(ret){
+                if(ret['code'] != 0){
+                    modalLoading.msg(ret['message']);
+                }else{
+                    modalLoading.hide();
+                    w.trigger('selected.goods',[ret['data']]);
+                }
+            },'json').error(function(){modalLoading.hide();modalLoading.msg("获取商品信息失败")});
+            return false;
+        }).on('click','a.ycs-link-pager', function () {
+            loadingData($(this).attr('href'),{});
+            return false;
+        });
+
+        $('#search-goods').on('click',function(){
+            loadingData(default_url,{goods_name:$('[name=goods_name]').val()});
+            return false;
+        });
+    });
+</script>

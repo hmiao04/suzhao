@@ -1,0 +1,171 @@
+{% extends "../member/layout.twig" %}
+
+{% block member_content %}
+    {% if error %}
+        {{ error }}
+    {% else %}
+        <form method="POST" action="{{ SITE_URL }}/api/sz.save" id="form1">
+            {% if pageinfo.id %}
+                <input type="hidden" name="id" value="{{ pageinfo.id }}">
+                <input type="hidden" name="save_action" value="{{ save_action }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="formtitle">标题</label>
+                <input type="text" name="title" id="formtitle" class="form-control required" placeholder="请输入标题"
+                       value="{{ pageinfo.find_title }}" data-message-required="请输入标题">
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="form_date">完成时间限制
+                        <span class="sub-title">希望几天内完成,0为不限制</span>
+                    </label>
+                    <div class="form-group">
+                        <input type="text" name="date" id="form_date" class="form-control need-number required"
+                               placeholder="希望几天内完成,0为不限制"
+                               value="{{ pageinfo.wish_finish_time }}">
+                        <div class="input-control-addition">天</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label for="formprice">完成酬劳</label>
+                    <div class="form-group">
+                        <input type="text" name="price" id="formprice" class="form-control need-number required min data-float"
+                               placeholder="完成这个任务所得酬劳" min="0.01" data-message-min="酬劳最小金额为0.01元"
+                               value="{{ pageinfo.paid_price }}">
+
+                        <div class="input-control-addition">元</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">
+                    任务图片 <span class="sub-title">任务图片不要太大</span>
+                </label>
+
+                <div class="select-image-wrapper clearfix">
+                    <div class="pull-left select-image">
+                        <span class="main-image">主图</span>
+
+                        <div class="preview">
+                            <i class="icon iconfont icon-tianjia"></i>
+                        </div>
+                        <div class="tool">
+                            <a href="#" class="change-select-image">更换</a>
+                        </div>
+                    </div>
+                    <input style="position: absolute;opacity: 0;" type="text" name="main_image"
+                           value="{{ pageinfo.main_image }}"
+                           class="required data-image-value" data-message-required="请选择任务图片">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">
+                    首页图片 <span class="sub-title">如果您的速找被推荐到首页将会显示此图</span>
+                </label>
+
+                <div class="select-image-wrapper clearfix">
+                    <div class="pull-left select-image">
+                        <span class="main-image">首页图片</span>
+
+                        <div class="preview">
+                            <i class="icon iconfont icon-tianjia"></i>
+                        </div>
+                        <div class="tool">
+                            <a href="#" class="change-select-image">更换</a>
+                        </div>
+                    </div>
+                    <input style="position: absolute;opacity: 0;" type="text" name="home_image"
+                           value="{{ pageinfo.home_image }}" class="data-image-value">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="formcontent" class="control-label">详情内容</label>
+
+                <div>
+                    <textarea name="content" id="formcontent" class="required"
+                              data-message-required="请输入详情内容">{{ pageinfo.find_content }}</textarea>
+                </div>
+                <div class="">
+                    <textarea id="formcontent_tool"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-default" style="margin-top: 10px;width:100px;">
+                <i class="glyphicon m-r-xs"></i>提交
+            </button>
+
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block end_body %}
+    <script src="{{ cdn }}/assets/js/laydate/laydate.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.js"></script>
+    <script>
+        var ue = null, res_url = '{{ res_url }}';
+        $(function () {
+            var opt = {theme: 'ycs', zIndex: 9, initialFrameHeight: 300, autoHeightEnabled: false};
+            UE.getEditor('formcontent', opt);
+            ue = UE.getEditor('formcontent_tool', opt);
+            var imgWrapper = null;
+            $('div.select-image').on('click', function () {
+                var div = $(this);
+                imgWrapper = div.parents('.select-image-wrapper:eq(0)');
+                if (div.hasClass('selected')) return false;
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+            });
+            $('a.change-select-image').on('click', function () {
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+                imgWrapper = $(this).parents('.select-image-wrapper:eq(0)');
+                return false;
+            });
+            ue.ready(function () {
+                ue.hide();
+                ue.addListener('beforeinsertimage', function (eventName, images) {
+                    if (images) {
+                        $('div.select-image',imgWrapper).each(function (index) {
+                            if (index < images.length) {
+                                var ele = $(this), url = images[index]['src'], alt = images[index]['alt'];
+                                ele.find('.selected-ele').remove();
+                                var _d = $('<div class="selected-ele"><img src="' + url + '"></div>');
+                                $('input.data-image-value',imgWrapper).val(alt);
+                                ele.addClass('selected').find('.preview').append(_d);
+                            }
+                        });
+                    }
+//                    $("#image_").attr("value", arg[0].src);
+//                    $('#up').text('重新上传');
+                });
+
+                var _v = $('input[name=main_image]').val();
+                if (_v) {
+                    ue.trigger('beforeinsertimage', [{src: res_url + _v, alt: _v}]);
+                }
+            });
+
+            $("#form1").submit(function () {
+                var frm = $(this);
+                if (frm.valid()) {
+                    modalLoading.show('保存数据中...');
+                    $.ajax({
+                        url: this.action, //后台处理程序
+                        type: this.method,//数据发送方式
+                        dataType: 'json',           //接受数据格式
+                        data: $(this).serializeArray(),
+                        success: function (ret) {
+                            if (common_config.ajax.process(ret)) {
+                                location.href = 'task.html?src=publish&status=success';
+                            }
+                        },
+                        error: common_config.ajax.error
+                    });
+                }
+                return false;
+            })
+
+        })
+    </script>
+{% endblock %}

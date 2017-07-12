@@ -1,0 +1,132 @@
+{% extends "admin.twig" %}
+{% block title %}保存数据{% endblock %}
+{% block head_end %}
+    <style>.edui-ycs .edui-editor {width: auto !important;}</style>
+{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md" id="saveRes">
+        <div class="panel panel-default">
+            <form action="article.save" id="saveArticle">
+                <input type="hidden" name="id" value="{{ article_data.id }}">
+                <input type="hidden" name="category_id" value="{{ current_cid }}">
+                <div class="panel-body">
+                    {% if current_cid != 10  %}
+                    <div class="form-group pull-in clearfix">
+                        <div class="col-sm-4">
+                            <label>文章标题</label>
+                            <input type="text" class="form-control required" placeholder="标题" name="title" value="{{ article_data.title }}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label>文章别名</label>
+                            <input type="text" class="form-control" placeholder="别名" name="alias" value="{{ article_data.alias }}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label>文章排序</label>
+                            <input type="text" class="form-control" placeholder="序号,数字越大排序越靠前,序号相同则按发布时间排" name="seq" value="{{ article_data.seq }}">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="form-group pull-in clearfix">
+                        <div class="pull-left" style="margin: 0 15px;">
+                            <span id="the-image-up-w"
+                                  style="display: inline-block;position: relative;width: 150px;float: left;"></span>
+                            <div class="fileinput fileinput-new" data-provides="fileinput" style="height: 125px;">
+                                <div class="fileinput-new thumbnail" data-trigger="fileinput" data-select-message="请选择主图" style="height: 125px;">
+                                    <img class="preview-img" style="height: 125px;" onerror="this.src='{{ SITE_URL }}/static/images/xkl_news_default.jpg'"
+                                         src="{{ res_url }}{{ article_data.picture }}"/>
+                                </div>
+                                <div>
+                                    <span class="btn btn-default btn-file">
+                                        <span class="fileinput-new">选择图片</span>
+                                        <span class="fileinput-exists">更改</span>
+                                        <input type="file" data-icon="false" data-value="{{ article_data.picture }}"
+                                               data-message-required="请选择图片" id="pictureFiles"
+                                               error-label-wrapper="#the-image-up-w" name="avatar"
+                                               accept="image/*">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin: 0 15px 0 230px;">
+                            <div class="">
+                                <label>文章标题</label>
+                                <input type="text" class="form-control required" placeholder="标题" name="title" value="{{ article_data.title }}">
+                            </div>
+                            <div class="">
+                                <label>文章别名</label>
+                                <input type="text" class="form-control" placeholder="别名" name="alias" value="{{ article_data.alias }}">
+                            </div>
+                            <div>
+                                <label>文章排序</label>
+                                <input type="text" class="form-control" placeholder="序号，数字越大排序越靠前,序号一致则按发布时间从新到旧排" name="seq" value="{{ article_data.seq }}">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="form-group form-editor">
+                        <label>文章简介 <span style="color:#ccc;font-size:12px;">(如果不填写则默认使用文章内容,最多填写300字超过则自动截取前300字)</span></label>
+                        <textarea style="height:80px" class="form-control" placeholder="文章简介" name="brief">{{ article_data.brief }}</textarea>
+                    </div>
+                    <div class="form-group form-editor">
+                        <label>文章内容</label>
+                        <textarea style="height:200px" placeholder="文章内容" id="container" name="content">{{ article_data.content }}</textarea>
+                    </div>
+                </div>
+                <footer class="panel-footer text-right bg-light lter">
+                    <button type="submit" class="btn btn-success">保存</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>var base_url = "{{ SITE_URL }}";</script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var opt = {theme: 'ycs', zIndex: 9, topOffset: 50, initialFrameHeight: 300};
+            var ue = UE.getEditor('container', opt),cid = parseInt('{{ current_cid }}');
+            $('#saveArticle').submit(function(){
+                var frm = $(this);
+                var postData = new FormData(this);
+                if($('#pictureFiles').length > 0){
+                    var fs = document.querySelector('#pictureFiles').files;
+                    $(fs).each(function(){ // 可以多文件上传
+                        postData.append('article_picture',this);// add file to formData
+                    });
+                }
+                var btn = frm.find('[type=submit]');
+                var ld = ycs.createLoadingText(function(str,l){btn.html('保存' + str);});
+                var ajaxDataProcess = {
+                    url:frm.attr('action'),
+                    type: 'POST',
+                    data: postData,
+                    processData: false,
+                    contentType: false,
+                    dataType:'json',
+                    error:function(){
+                        ld.stop();
+                        alert('保存文章时，发生了致命的错误');
+                    },
+                    success:function(ret){
+                        ld.stop();
+                        if(ret['code'] == 0){
+                            alert('保存文章成功');
+                            var url = cid == 3 ? 'view.product':'view.news?category_id=' + cid;
+                            if(cid == 4) url = 'view.about-us';
+                            location.href=url;
+                        }else{
+                            alert(ret['message']);
+                        }
+                    }
+                };
+                $.ajax(ajaxDataProcess);
+                return false;
+            });
+        });
+    </script>
+    <script>
+
+    </script>
+{% endblock %}

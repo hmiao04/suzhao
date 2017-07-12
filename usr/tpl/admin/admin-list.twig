@@ -1,0 +1,149 @@
+{% extends 'admin.twig' %}
+{% block title %}{{ page_model }}查询 - 管理员管理 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light search-bar">
+                <form class="form-inline pull-left ajax-query-form" role="form"
+                      action="?act=search"target="#admin_list_wrapper">
+                    <div class="form-group">
+                        <input type="text" name="nick_name-like" class="form-control" placeholder="昵称">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="account-like" class="form-control" placeholder="登录账号">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="role_id">
+                            <option value="">请选择管理员类型</option>
+                            {% for r in role_list %}
+                                <option value="{{ r.id }}">{{ r.role_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">搜索</button>
+                    </div>
+                </form>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper ajax-data-wrapper" id="admin_list_wrapper">
+                {% include 'admin-list-item.twig' with {page_mode_title:''} %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveAdmin" class="modal fade" modal-window="" animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res" action="../api/administrator.save" method="post">
+                        <div class="modal-header">
+                            <h3 class="modal-title">管理员信息</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="member-name">登录账号</label>
+                                <input type="text" class="form-control required" placeholder="请输入登录账号"
+                                       v-model="res.account" data-message-required="请输入登录账号">
+                            </div>
+                            <div class="form-group">
+                                <label for="member-name">登录密码</label>
+                                <input type="text" class="form-control" placeholder="******"
+                                       v-model="res.pwd">
+                            </div>
+                            <div class="form-group">
+                                <label for="member-name">账号昵称</label>
+                                <input type="text" class="form-control" placeholder="请输入账号昵称"
+                                       v-model="res.nick_name" data-message-required="请输入登录账号">
+                            </div>
+                            <div class="form-group">
+                                <label>管理员类型:</label>
+                                <span>${ res.role_name }</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="member-name">激活状态</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="status" checked="checked" value="1" v-model="res.status">启用</label>
+                                    <label style="margin-left: 20px;">
+                                        <input type="radio" name="status" value="0" v-model="res.status">禁用</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveData">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        var companyList = [];
+        Vue.config.delimiters = ['${', '}'];
+        var editData = {
+            res: {
+                id:0,
+                nick_name:'',
+                account:'',
+                pwd:'',
+                type:'',
+                role_id:'',
+                note:'',
+                status:'0'
+            }
+        };
+        $(function(){
+            $('select[name=role_id]').find('option').each(function(){
+                if($(this).attr('data-addition')){
+                    var addition = $(this).attr('data-addition').split('|');
+                    var _lv = addition[0];
+                    $(this).attr('data-level',parseInt(_lv)+1);
+                }
+            });
+            var editApp = new Vue({
+                el: '#saveAdmin',
+                data: editData,
+                methods: {
+                    saveData: function () {
+                        var frm = $('form.save-res');
+                        if (frm.valid()) {
+                            ycs.post(frm.attr('action'), editData.res, function (ret) {
+                                if (ret['code'] == 0) {
+                                    location.reload();
+                                } else {
+                                    alert(ret['message']);
+                                }
+                            }, 'json');
+                        }
+                        return false;
+                    }
+                }
+            });
+            $('#saveAdmin').on('show.bs.modal', function (e) {
+                var modal = $(this);
+                var link = $(e.relatedTarget), mode = link.attr('data-mode');
+                modal.find('label.error').html('');
+                if (mode == 'edit') {
+                    modal.find('.modal-title').html('修改数据')
+                    $.get(link.attr('data-url'), function (ret) {
+                        if (ret['code'] == 0) {
+                            editData.res = ret['data'];
+                            editData.res.pwd = '';
+                            modal.find('select[name=role_id]').val(editData.res.role_id);
+                        } else {
+                            alert(ret['message']);
+                        }
+                    }, 'json');
+                } else {
+                    modal.find('form').get(0).reset();
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

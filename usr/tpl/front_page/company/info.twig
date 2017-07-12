@@ -1,0 +1,79 @@
+{% extends '../page.layout.twig' %}
+{% block title %}{{ company.company_name }}{% endblock %}
+{% block block_class_name %}company-info-app company-detail-page{% endblock %}
+{% block app_content %}
+
+    <div class="container">
+        <div class="task-wrapper">
+        </div>
+    </div>
+    <div class="container">
+        <div class="company-wrapper">
+            <div class="company-info">
+                <div class="pull-left">
+                    <img src="{{ res_url }}{{ company.company_image }}?resize/w=400" alt="">
+                </div>
+                <div style="margin-left:430px;">
+                    <h1 class="company-title"><span class="p-name fy24">{{ company.company_name }}</span></h1>
+                    <div class="company-contact">
+                        <p>
+                            <span class="title">电话：</span>
+                            {% if IS_VIP %}
+                                <span>{{ company.company_phone }}</span>
+                            {% else %}<span class="text-danger">仅限VIP会员查看</span>{% endif %}
+                        </p>
+                        <p><span class="title">传真：</span>
+                            {% if IS_VIP %}
+                                <span>{{ company.company_fax }}</span>
+                            {% else %}<span class="text-danger">仅限VIP会员查看</span>{% endif %}
+                        </p>
+                        <p><span class="title">QQ：</span>
+                            {% if IS_VIP %}
+                                <span>{{ company.company_qq }}</span>
+                            {% else %}<span class="text-danger">仅限VIP会员查看</span>{% endif %}
+                        </p>
+                        <p><span class="title">地址：</span>
+                            {% if IS_VIP %}
+                                <span>{{ company.company_address }}</span>
+                            {% else %}<span class="text-danger">仅限VIP会员查看</span>{% endif %}
+                        </p>
+                    </div>
+                </div>
+                <br class="clear">
+            </div>
+            <div class="company-desc">
+                <div class="content-title">
+                    <span>公司简介</span>
+                </div>
+                {{ company.company_desc|raw }}
+            </div>
+        </div>
+        <!--公司产品 -->
+        <div class="panel data-list-wrapper">
+            <div class="content-title">
+                <span>公司产品</span>
+            </div>
+            <div class="panel-body data-list-container">
+                <div class="row" style="margin: 0 -30px;">
+                    {% for item in goodsList %}
+                        <div class="col-item-5 col-md-3">
+                            <div class="item-content">
+                                <a href="../goods/detail.html?id={{ item.id }}" class="list-img" target="t_g_{{ item.id }}">
+                                    <div class="img"><img src="{{ res_url }}{{ item.main_image }}?resize/h=250&x-oss-process=image/resize,m_fixed,h_250/format,webp" alt="{{ item.title }}"></div>
+                                </a>
+                                <div>
+                                    <a href="../goods/detail.html?id={{ item.id }}" class="list-title" target="t_g_{{ item.id }}">
+                                        <h4 class="goods-price text-danger">¥{{ item.price_sale }}</h4>
+                                        <p class="tuan-title">{{ item.title }}</p>
+                                        <p class="goods-name">{{ item.goods_name }}</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% include '../layout.page.twig' %}
+        </div>
+    </div>
+{% endblock %}

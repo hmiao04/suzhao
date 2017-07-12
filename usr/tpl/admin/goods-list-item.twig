@@ -1,0 +1,32 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>商品名称</th>
+        <th>发布用户</th>
+        <th>发布时间</th>
+        <th>价格(元)</th>
+        <th>状态</th>
+        <th>排序</th>
+        <th width="120">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for g in goodsList %}
+        <tr>
+            <td>{{ g.id }}</td>
+            <td><a href="{{ SITE_URL }}/goods/detail.html?id={{ g.id }}" target="goods_{{ g.id }}">{{ g.title }} <em class="fa fa-share-square-o"></em></a></td>
+            <td>{{ g.member_name }}</td>
+            <td>{{ g.created_date|date('Y-m-d H:i') }}</td>
+            <td>￥{{ g.price_sale }}</td>
+            <td><span id="status_{{ g.id }}" class="label {{ g.status == 1 ?'bg-success':'bg-warning' }}">{{ g.status == 1 ?'正常':'已下架' }}</span></td>
+            <td>{{ g.seq }}</td>
+            <td>
+                <a href="change.status?id={{ g.id }}&status={{ g.status == 1 ?'2':'1' }}" class="ajax-post delete-link confirm">{{ g.status == 1 ?'下架':'上架' }}</a>
+                <a href="change.status?id={{ g.id }}&status=0" class="ajax-post delete-link confirm">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

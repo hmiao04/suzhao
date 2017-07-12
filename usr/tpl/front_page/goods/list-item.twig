@@ -1,0 +1,23 @@
+<div class="row">
+    {% for item in goodsList %}
+        <div class="col-item-5">
+            <a href="detail.html?id={{ item.id }}" class="list-img" target="t_g_{{ item.id }}">
+                <div class="img"><img src="{{ res_url }}{{ item.main_image }}" alt="{{ item.title }}">
+                </div>
+            </a>
+
+            <div>
+                <a href="detail.html?id={{ item.id }}" class="list-title" target="t_g_{{ item.id }}">
+                    <p class="item-title">{{ item.title }}</p>
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <h2>没有找到相关的材料</h2>
+    {% endfor %}
+</div>
+{% if goodsList %}
+<div class="row">
+    {% include '../layout.page.twig' %}
+</div>
+{% endif %}

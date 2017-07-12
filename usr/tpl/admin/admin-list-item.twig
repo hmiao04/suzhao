@@ -1,0 +1,29 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>账号</th>
+        <th>昵称</th>
+        <th>账号类型</th>
+        <th>激活状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in adminList %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ a.account }}</td>
+            <td>{{ a.nick_name }}</td>
+            <td>{{ a.role_name }}</td>
+            <td><span class="label {{ a.status == 1 ?'bg-success':'bg-warning' }}">{{ a.status == 1 ?'正常':'禁用' }}</span></td>
+            <td>
+                <a href="##" data-url="../api/administrator.info?id={{ a.id }}"
+                   data-mode="edit" data-toggle="modal" data-target="#saveAdmin">查看</a>
+                <a href="delete?id={{ a.id }}" class="ajax-post delete-link confirm">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

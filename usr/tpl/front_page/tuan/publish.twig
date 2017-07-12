@@ -1,0 +1,213 @@
+{% extends '../page.layout.twig' %}
+{% block title %}发起团购{% endblock %}
+{% block app_content %}
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <form method="post" action="save.html" class="form-tuan-save form-horizontal">
+                    <input type="hidden" name="id" value="{{ t.id }}">
+                    <input type="hidden" name="save_action" value="{{ save_action }}">
+                    <input type="hidden" name="goods_id" id="goods_id" value="{{ t.goods_id }}">
+                    <div class="form-group">
+                        <div>
+                            <label for="formtitle" class="control-label">标题</label>
+                            <a href="#" data-url="../api/administrator.info?id={{ a.id }}" style="margin-left: 10px;"
+                               data-toggle="modal" data-target="#goods-list-search">直接选择商品</a>
+                        </div>
+                        <input type="text" name="title" class="form-control required" placeholder="请输入团购标题"
+                               value="{{ t.title }}" data-message-required="请输入团购标题">
+                    </div>
+                    <div class="form-group row" style="margin:0 -15px 0 -30px;">
+                        <div class="col-md-6">
+                            <div>
+                                <label for="formtitle" class="control-label">期望交货时间</label>
+                            </div>
+                            <input type="text" name="end_time" class="form-control" readonly="readonly" placeholder="请选择期望交货时间,不填写则表示不限制"
+                                   value="{{ t.end_time }}" onclick="laydate({min: laydate.now(+1)})">
+                        </div>
+                        <div class="col-md-6">
+                            <div>
+                                <label for="formtitle" class="control-label">商品价格</label>
+                            </div>
+                            <div class="form-group" style="margin-left: 0;">
+                                <input type="text" name="buy_price"  class="form-control need-number" placeholder="商品价格"
+                                       value="{{ t.extraData.tuan_price }}">
+                                <div class="input-control-addition">元</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">
+                            首页图片 <span class="sub-title">如果您的团购被推荐到首页将会显示此图</span>
+                        </label>
+
+                        <div class="select-image-wrapper clearfix">
+                            <div class="pull-left select-image">
+                                <span class="main-image">首页图片</span>
+                                <div class="preview">
+                                    <i class="icon iconfont icon-tianjia"></i>
+                                </div>
+                                <div class="tool">
+                                    <a href="#" class="change-select-image">更换</a>
+                                </div>
+                            </div>
+                            <input style="position: absolute;opacity: 0;" type="text" name="home_image"
+                                   value="{{ t.home_image }}" class="data-image-value">
+                        </div>
+                    </div>
+                    <div class="form-group main-image-container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label">
+                                    团购图片 <span class="sub-title">此图片不要太大</span>
+                                </label>
+                                <div class="select-image-wrapper clearfix">
+                                    <div class="pull-left select-image">
+                                        <span class="main-image">主图</span>
+
+                                        <div class="preview">
+                                            <i class="icon iconfont icon-tianjia"></i>
+                                        </div>
+                                        <div class="tool">
+                                            <a href="#" class="change-select-image">更换</a>
+                                        </div>
+                                    </div>
+                                    <input style="position: absolute;opacity: 0;" type="text" value="{{ t.main_image }}"
+                                       name="main_image" class="required data-image-value" data-message-required="请选择团购图片">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>要求</label>
+                        <textarea name="require" class="form-control" style="height: 80px;"
+                                  placeholder="请输入要求">{{ t.require }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="formcontent" class="control-label">详情内容</label>
+                        <div>
+                            <textarea name="content" class="required" data-message-required="请填写详情内容"
+                                      id="formcontent">{{ t.extraData.tuan_content }}</textarea>
+                        </div>
+                        {#此容器用于图片选择#}
+                        <div class=""><textarea id="formcontent_tool" name="formcontent_tool"></textarea></div>
+                    </div>
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-default btn-save btn-save-data">
+                            <i class="glyphicon m-r-xs"></i>
+                            保存
+                        </button>
+                        <button type="submit" class="btn btn-success btn-publish btn-save-data">
+                            <i class="glyphicon m-r-xs"></i>
+                            直接发起
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        {% include '../part/goods-select-wrapper.twig' %}
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.js"></script>
+    <script src="{{ cdn }}/assets/js/laydate/laydate.js"></script>
+    <script>
+        var ue = null, res_url = '{{ res_url }}',goods_status = {{ goods_status }};
+        $(function () {
+            var opt = {theme: 'ycs', zIndex: 9, initialFrameHeight: 300, autoHeightEnabled: false};
+            var ueMain = UE.getEditor('formcontent', opt);
+            ue = UE.getEditor('formcontent_tool', opt);
+            var imgWrapper = null;
+            //
+            $('div.select-image').on('click', function () {
+                var div = $(this);
+                imgWrapper = div.parents('.select-image-wrapper:eq(0)');
+                if (div.hasClass('selected') || div.hasClass('readonly')) return false;
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+            });
+            $('a.change-select-image').on('click', function () {
+                var imgDialog = ue.getDialog("insertimage");
+                imgWrapper = $(this).parents('.select-image-wrapper:eq(0)');
+                imgDialog.open();
+                return false;
+            });
+            ue.ready(function () {
+                ue.hide();
+                ue.addListener('beforeinsertimage', function (eventName, images) {
+                    if (images && images.length > 0) {
+                        $('div.select-image',imgWrapper).each(function (index) {
+                            if (index < images.length) {
+                                var ele = $(this), url = images[index]['src'], alt = images[index]['alt'];
+                                ele.find('.selected-ele').remove();
+                                var _d = $('<div class="selected-ele"><img src="' + url + '"></div>');
+                                $('input.data-image-value',imgWrapper).eq(index).val(alt);
+                                ele.addClass('selected').find('.preview').append(_d);
+                            }
+                        });
+                    }
+                });
+                var _v = $('input[name=main_image]').val();
+                if(_v){
+                    ue.trigger('beforeinsertimage',[{src:res_url + _v,alt:_v}]);
+                }
+            });
+
+            var is_publish = false;
+            $('.btn-save-data').on('click',function(){
+                if($(this).hasClass('btn-publish')) is_publish = true;
+            });
+            $('.form-tuan-save').on('submit', function (e) {
+                var frm = $(this), data = frm.serializeArray();
+                var action = '?action=' + (is_publish?'publish':'save');
+                var publish_status = is_publish;
+                if (frm.valid()) {
+                    modalLoading.show('保存数据中...');
+                    $.post(frm.attr('action') + action, data, function (ret) {
+                        if(common_config.ajax.process(ret)){
+                            if(publish_status){
+                                modalLoading.msg('发起团购成功,3秒后跳转到团购页后可立即参团！',3000,function(){
+                                    location.href = '../tuan/detail.html?id=' + ret['data']['id'];
+                                })
+                            }else{
+                                location.href = '../member/tuan.html';
+                            }
+                        }
+                    }, 'json').error(common_config.ajax.error);
+                }
+                is_publish = false;
+                return false;
+            });
+            $('#goods-list-search').on('selected.goods', function (e, g) {
+                ueMain.setContent(g['goods_content']);
+                ueMain.setDisabled('fullscreen');
+
+                $('input[name=title]').val(g['title']);
+                $('#goods_id').val(g['id']);
+                if (g['goods_image'].length > 0) {
+                    $('div.select-image','.main-image-container').each(function (index) {
+                        if (index < g['goods_image'].length) {
+                            var ele = $(this), url = g['goods_image'][index], alt = g['goods_image'][index];
+                            ele.find('.selected-ele').remove();
+                            var _d = $('<div class="selected-ele"><img src="' + res_url + url + '"></div>');
+                            $('input[name=main_image]').val(alt);
+                            ele.removeClass('selected').addClass('readonly').find('.preview').append(_d);
+                        }
+                    });
+                }
+            });
+            ueMain.ready(function(){
+                if(goods_status == 1){
+                    $('div.select-image').removeClass('selected').addClass('readonly');
+                    ueMain.setDisabled('fullscreen');
+                }
+            });
+        })
+    </script>
+{% endblock %}

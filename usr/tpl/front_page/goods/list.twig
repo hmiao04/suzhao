@@ -1,0 +1,60 @@
+{% extends '../page.layout.twig' %}
+{% block block_class_name %}goods-list data-list-page{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="panel data-list-wrapper">
+            <div class="panel-heading">
+                <div class="filter">
+                    <dl class="filter-list row">
+                        <dt class="filter-title fl">分类</dt>
+                        <dd class="filter-column">
+                            <ul class="category filter-category clearfix">
+                                <li class="main-category active"><a href="#" rel="nofollow" title="全部">全部</a></li>
+                                {% for cate in categoryList %}
+                                    <li class="main-category has-child">
+                                        <a href="javascript:void(0);">{{ cate.cate_name }}</a>
+
+                                        <div class="sub-category">
+                                            <ul class="sub-category-list">
+                                                {% for cc in cate.child %}
+                                                    <li class="category-link-wrapper">
+                                                        <a href="#" class="category-link"
+                                                           data-cate-id="{{ cc.id }}">{{ cc.cate_name }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="filter-list clf row ">
+                        <dt class="filter-title fl">颜色</dt>
+                        <dd class="filter-column">
+                            <ul class="clf filter-color">
+                                <li class="color-item all active">
+                                    <a href="#" rel="nofollow" title="全部" data-color="all"></a>
+                                </li>
+                                {% for c in colorList %}
+                                    <li class="color-item {{ c.value=='white'?'other ':'' }}"><a href="#{{ c.value }}"
+                                                                                                 data-color="{{ c.value }}"
+                                                                                                 title="{{ c.name }}"
+                                                                                                 style="background-color: {{ c.value }};"></a>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+                        </dd>
+                    </dl>
+                    <div class="filter-cover-line"></div>
+                </div>
+            </div>
+            <div class="panel-body data-list-container" id="goods-list-wrapper">
+                {% include 'list-item.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script>ycj('goods-list').delayRun(50);</script>
+{% endblock %}

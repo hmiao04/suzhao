@@ -1,0 +1,101 @@
+{% extends "admin.twig" %}
+{% block title %}{{ page_model }}注册 - 管理员管理 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default" id="saveAdmin">
+            <div class="panel-heading">您只能添加自己公司及下属公司的数据</div>
+            <div class="panel-body">
+                <form class="validate save-res" action="../api/administrator.save" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="member-name">登录账号</label>
+                            <input type="text" class="form-control required" placeholder="请输入登录账号"
+                                   v-model="res.account" data-message-required="请输入登录账号">
+                        </div>
+                        <div class="form-group">
+                            <label for="member-name">登录密码</label>
+                            <input type="text" name="pwd" class="form-control required" v-model="res.pwd"
+                                   placeholder="请输入登录密码"
+                                   data-message-required="请输入登录密码">
+                        </div>
+                        <div class="form-group">
+                            <label>管理员类型</label>
+
+                            <div class="select form-inline">
+                                <select name="role_id" class="form-control required"
+                                        data-message-required="请选择{{ page_model }}类型" v-model="res.role_id">
+                                    <option value="">请选择{{ page_model }}类型</option>
+                                    {% for r in role_list %}
+                                        <option value="{{ r.id }}"
+                                                data-addition="{{ r.addition }}">{{ r.role_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-name">激活状态</label>
+
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="state" checked="checked" value="1" v-model="res.state">启用</label>
+                                <label style="margin-left: 20px;">
+                                    <input type="radio" name="state" value="0" v-model="res.state">禁用</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" v-on:click="saveData">
+                            <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        var companyList = [];
+        Vue.config.delimiters = ['${', '}'];
+        $(function () {
+            $('select[name=role_id]').find('option').each(function () {
+                if ($(this).attr('data-addition')) {
+                    var addition = $(this).attr('data-addition').split('|');
+                    var _lv = addition[0];
+                    console.log(_lv)
+                    $(this).attr('data-level', parseInt(_lv) + 1);
+                }
+            });
+            var editData = {
+                res: {
+                    id: '0',
+                    account: '',
+                    pwd: '',
+                    role_id: '',
+                    note: '',
+                    state: '1',
+                    nick_name: ''
+                }
+            };
+            var editApp = new Vue({
+                el: '#saveAdmin',
+                data: editData,
+                methods: {
+                    saveData: function () {
+                        var frm = $('form.save-res');
+                        if (frm.valid()) {
+                            ycs.post(frm.attr('action'), editData.res, function (ret) {
+                                if (ret['code'] == 0) {
+                                    location.reload();
+                                } else {
+                                    alert(ret['message']);
+                                }
+                            }, 'json');
+                        }
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

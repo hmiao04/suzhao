@@ -1,0 +1,23 @@
+{% extends 'page.layout.twig' %}
+{% block title %}支付确认中...{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="message-info">
+            <h2 id="pay-result">确认支付中...</h2>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script>
+        var pay_data = {{ pay_back_data|raw }};
+        $(function(){
+            $.post('query.html',pay_data,function(ret){
+                if(ret['code'] == 0){
+                    location.href = '../member/bill.html';
+                }else{
+                    $('#pay-result').html(ret['message']);
+                }
+            },'json');
+        });
+    </script>
+{% endblock %}

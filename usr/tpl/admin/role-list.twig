@@ -1,0 +1,252 @@
+{% extends "admin.twig" %}
+{% block title %}角色资源管理 - 系统管理{% endblock %}
+{% block head_end %}
+    <style type="text/css">
+        .node-list label[class=checkbox]{padding-top: 0;display: inline-block;margin-left: 20px;}
+        .node-list input[type=checkbox]{margin-top: 8px;}
+            /* 授权编辑页*/.checkmod{margin-bottom: 20px;border: 1px solid #f0f0f0;}
+        .checkmod dt{padding-left: 10px;height: 30px;line-height: 30px;font-weight: bold;
+            border-bottom: 1px solid #f0f0f0;background-color: #f0f0f0;}
+        .checkmod dd{padding-left: 10px;line-height: 30px;}
+        .checkmod dd .checkbox{margin: 0 10px 0 20px;}
+        .checkmod dd .divsion{margin-right: 20px;display: none;}
+        .child_row{margin: 0 0 0 20px;display: block;}
+        .rule_check{}
+    </style>
+{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <a href="##" class="pull-right" data-toggle="modal" data-target="#saveRes">新增角色</a>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-responsive">
+                    <thead>
+                    <tr>
+                        <th width="160">序号</th>
+                        <th>角色名称</th>
+                        <th>别名</th>
+                        <th>类型</th>
+                        <th>备注</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for l in logList %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ l.role_name }}</td>
+                            <td>{{ l.alias }}</td>
+                            <td>{{ l.type ==1?'管理员':'操作员' }}</td>
+                            <td>{{ l.remark }}</td>
+                            <td><span class="label {{ l.status == 1 ?'bg-success':'bg-warning' }}">{{ l.status == 1 ?'启用':'禁用' }}</span></td>
+                            <td>
+                                {% if l.is_sys == 0 %}
+                                <a href="##" data-url="../api/model.yc_admin_role.info?id={{ l.id }}"
+                                   data-mode="edit" data-toggle="modal" data-target="#saveRes">修改</a>
+                                {% endif %}
+                                <a href="###" data-url="../api/role.resource.info?id={{ l.id }}"
+                                   data-mode="edit" data-toggle="modal" data-target="#saveRoleRes">授权</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveRes" class="modal fade" modal-window="" animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res" action="../api/role.info.save" method="post">
+                        <div class="modal-header">
+                            <h3 class="modal-title">体检项数据</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>角色名称</label>
+                                    <input type="text" name="role_name" class="form-control required" v-model="res.role_name"
+                                           data-message-required="请填写角色名称" maxlength="50"
+                                           placeholder="">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>别名</label>
+                                    <input type="text" class="form-control required" v-model="res.alias"
+                                           data-message-required="请填写别名" name="alias"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>类型</label>
+                                    <select name="type" class="form-control m-b " v-model="res.type">
+                                        <option value="1">管理员</option>
+                                        <option value="0">操作员</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>状态</label>
+                                    <select name="state" class="form-control m-b " v-model="res.status">
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>备注</label>
+                                    <input type="text" class="form-control" v-model="res.remark"
+                                           data-message-required="" name="remark"
+                                           placeholder="想要有什么要表示的内容">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>Role Level</label>
+                                    <input type="text" class="form-control" v-model="res.level"
+                                           data-message-required="" name="level"
+                                           placeholder="此数据很重要如不清楚不要修改">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>附加数据</label>
+                                    <input type="text" class="form-control" v-model="res.addition"
+                                           data-message-required="" name="addition"
+                                           placeholder="此数据一般不会使用">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveData">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div tabindex="-1" role="dialog" id="saveRoleRes" class="modal fade" modal-window="" animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate saveRoleResFrm" action="../api/role.resource.save" method="post">
+                        <div class="modal-header">
+                            <h3 class="modal-title">权限设置</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="node-list in data-view role-res-wrapper">
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-default">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+<script type="text/javascript">
+    var editData = {
+        res: {
+            id: 0,
+            role_name:'',
+            type:'',
+            alias:'',
+            remark:'',
+            addition:'',
+            level:0,
+            is_sys:''
+        }
+    };
+
+    $(function () {
+        $.fn.checkAll = function(){
+            this.on('click',function(){
+                var me = $(this);
+                var data_check = me.attr('data-check');
+                if(!data_check) {data_check = me.attr('data-target')}
+                var state = this.checked;
+                $(data_check).each(function(){
+                    this.checked = state;
+                });
+            })
+        };
+
+        var editApp = new Vue({
+            el: '#saveRes',
+            data: editData,
+            methods: {
+                saveData: function () {
+                    var frm = $('form.save-res');
+                    if (frm.valid()) {
+                        $.post(frm.attr('action'), editData.res, function (ret) {
+                            if (ret['code'] == 0) {
+                                location.reload();
+                            } else {
+                                alert(ret['message']);
+                            }
+                        }, 'json');
+                    }
+                    return false;
+                }
+            }
+        });
+        $('form.saveRoleResFrm').on('submit',function(){
+            var frm = $('form.saveRoleResFrm');
+            $.post(frm.attr('action'), frm.serializeArray(), function (ret) {
+                if (ret['code'] == 0) {
+                    //location.reload();
+                    $('#saveRoleRes').modal('hide');
+                } else {
+                    alert(ret['message']);
+                }
+            }, 'json');
+            return false;
+        })
+        $('#saveRoleRes').on('show.bs.modal', function (e) {
+            var modal = $(this);
+            var link = $(e.relatedTarget);
+            modal.find('.role-res-wrapper').load(link.attr('data-url'),function(){
+                modal.find('input[type=checkbox].check-all').checkAll();
+            });
+
+
+        });
+        $('#saveRes').on('show.bs.modal', function (e) {
+            var modal = $(this);
+            var link = $(e.relatedTarget), mode = link.attr('data-mode');
+            modal.find('label.error').html('');
+            if (mode == 'edit') {
+                modal.find('.modal-title').html('修改数据')
+                $.get(link.attr('data-url'), function (ret) {
+                    if (ret['code'] == 0) {
+                        editData.res = ret['data'];
+                    } else {
+                        alert(ret['message']);
+                    }
+                }, 'json');
+            } else {
+                editData.res.item_name = '';
+                modal.find('.modal-title').html('新增数据')
+                modal.find('form').get(0).reset();
+            }
+        });
+    });
+</script>
+<script>
+
+</script>
+{% endblock %}

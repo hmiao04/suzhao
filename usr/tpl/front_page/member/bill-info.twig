@@ -1,0 +1,44 @@
+{% extends '../page.layout.twig' %}
+{% block title %}账单详情{% endblock %}
+{% block app_content %}
+    <div class="pay-info-wrapper">
+        <h3 class="p-pay-pt">账单详情</h3>
+        <div class="bill-info">
+            <h4 class="info-item">{{ bill_info.bill_title }}</h4>
+            <div class="info-item">
+                <span>付款金额：</span><span class="pay-money">{{ bill_info.pay_money }}</span><span>元</span>
+            </div>
+            <div class="info-item">
+                <span>支付编号：</span><span>{{ bill_info.bill_sn }}</span>
+            </div>
+            <div class="info-item">
+                <span>创建时间：</span><span>{{ bill_info.create_time|date('Y-m-d h:i:s') }}</span>
+            </div>
+            {% if bill_info.pay_status == 1 %}
+                <div class="info-item">
+                    <span>支付方式：</span><span>{{ bill_info.pay_way }}</span>
+                </div>
+                <div class="info-item">
+                    <span>支付时间：</span><span>{{ bill_info.paid_time|date('Y-m-d h:i:s') }}</span>
+                </div>
+            {% endif %}
+            <div class="info-item">
+                <span>支付状态：</span><span>{{ bill_info.pay_status == 1?'已':'未' }}支付</span>
+            </div>
+            {% if bill_info.bill_data %}
+            <div class="bill-data-wrapper">
+                {% for k,v in bill_info.bill_data %}
+                <div class="bill-data-item info-item">
+                    {% if k !='none' %}<span>{{ k }}：</span>{% endif %}<span>{{ v|raw }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if bill_info.pay_status == 0 %}
+            <div class="text-left">
+                <a href="../pay/pay.html?bill_sn={{ bill_info.bill_sn }}" class="btn btn-danger btn-pay" target="_blank">立即支付</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

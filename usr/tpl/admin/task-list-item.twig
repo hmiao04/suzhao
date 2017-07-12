@@ -1,0 +1,35 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>标题</th>
+        <th>发起用户</th>
+        <th>发起时间</th>
+        <th>酬金(元)</th>
+        <th>支付状态</th>
+        <th>状态</th>
+        <th>排序</th>
+        <th width="120">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in taskList %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ a.find_title }}</td>
+            <td>{{ a.member_name }}</td>
+            <td>{{ a.created_date|date('Y-m-d H:i') }}</td>
+            <td>￥{{ a.paid_price }}</td>
+            <td><span id="pay_status_{{ a.id }}">{{ a.pay_status==1?'已':'未' }}支付</span></td>
+            <td><span id="status_{{ a.id }}" class="label {{ a.status == 1 ?'bg-success':'bg-warning' }}">{{ a.status == 1 ?'未接':(a.status == 2?'已接':'已取消') }}</span></td>
+            <td>{{ a.seq }}</td>
+            <td>
+                <a href="##" class="ajax-load allow-close" data-url="task.info?id={{ a.id }}" data-modal-title="任务：{{ a.find_title }}"
+                   data-mode="edit" data-toggle="modal" data-target="#modal-ajax">详情</a>
+                <a href="cancel?id={{ a.id }}" class="ajax-post delete-link confirm">取消</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

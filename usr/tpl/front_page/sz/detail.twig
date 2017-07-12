@@ -1,0 +1,242 @@
+{% extends '../page.layout.twig' %}
+{% block title %}{{ task_info.find_title }} - 速找网{% endblock %}
+{% block block_class_name %}task{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="task-wrapper">
+            <div class="pull-left">
+                <img src="{{ res_url }}{{ task_info.main_image }}?resize/w=400&x-oss-process=image/resize,m_fixed,w_400/format,webp" alt="">
+            </div>
+            <div class="task-detail">
+                <h2 class="task-title">
+                    <span>{{ task_info.find_title }}</span>
+                </h2>
+
+                <div class="task-info">
+
+                    <h2 style="margin: 0 0 10px;">
+                        <span class="price">{{ task_info.paid_price|number_format(2, '.', ',') }}</span>
+                        <span style="font-size: 14px;">元</span>
+                    </h2>
+                    <div>
+                        <span class="item">发布时间:</span><span>{{ task_info.created_date|date('Y-m-d') }}</span>
+                    </div>
+                    <div>
+                        <span class="item">发布者联系电话:</span><span>{{ task_member.phone }}</span>
+                        <span class="text-warning">{{ showPhone?'':'(接速找后可以查看)' }}</span>
+                    </div>
+                    <div>
+                        <span class="item">希望完成时间:</span><span>
+                        {% if task_info.wish_finish_time != 0 %}
+                            {{ task_info.wish_finish_time }}天
+                        {% else %}
+                            无限制
+                        {% endif %}
+                    </span>
+                    </div>
+                    <div class="member-info">
+                        发布者:{{ task_member.name }}
+                    </div>
+                </div>
+
+                <div class="task-control">
+                    <div class="controls">
+                        {% if task_info.status == 1 %}
+                            {% if task_info.member_id != MEMBER_INFO.id %}
+                                <a href="#" class="btn btn-info" data-toggle="modal"
+                                   data-target="#jie-tuan-info">接此速找</a>
+                            {% endif %}
+                        {% elseif task_info.status == 2 and MEMBER_INFO.id == task_info.member_id %}
+                            <a href="#" class="btn btn-success" data-toggle="modal"
+                               data-target="#task-done">完成速找</a>
+                        {% else %}
+                            <span href="#" class="btn btn-default disabled" style="width: 130px;">
+                                {{ task_info.status == 2?'速配中...':(task_info.status == 3?'已取消':'已完成') }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <br class="clear">
+
+            <div class="task-record">
+                <div class="task-join">
+                    <div class="content-title">
+                        <span>速配答案</span>
+                    </div>
+                    <div class="media-list">
+                        {% for r in record_list %}
+                            <div class="media">
+                                <div class="media-left">
+                                    <a href="#">
+                                        <img class="media-object img-circle" data-src="holder.js/64x64"
+                                             alt="64x64"
+                                             src="{{ res_url }}{{ r.avatar }}?resize/w=140/h=140"
+                                             data-holder-rendered="true"
+                                             style="max-width: 64px;width: 64px; height: 64px;">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        {{ r.name }}
+                                        <span class="item">接受时间:{{ r.join_time|date('Y-m-d') }}</span>
+                                        {% if r.status == 2 %}
+                                            <span> <span
+                                                        class="item">完成时间:{{ r.answer_time|date('Y-m-d') }}</span></span>
+                                        {% endif %}
+                                    </h4>
+
+                                    <div class="answer-data-wrapper">
+                                        {% if MEMBER_INFO.id == task_info.member_id %}
+                                            {% if r.status == 2 %}
+                                                {% if task_info.pay_status == 1 %}
+                                                    <div>{{ r.answer_data|raw }}</div>
+                                                {% else %}
+                                                    <strong style="color:#f00;font-size: 16px;margin: 2px 0 0;display: inline-block;">需要先支付才能查看速配方案</strong>
+                                                {% endif %}
+                                            {% else %}
+                                                <strong style="color:#f00;font-size: 16px;margin: 2px 0 0;display: inline-block;">还没有提交速配方案</strong>
+                                            {% endif %}
+                                            <br>
+                                        {% elseif  MEMBER_INFO.id == r.member_id %}
+                                            {% if r.status == 2 %}
+                                                <div>{{ r.answer_data|raw }}</div>
+                                            {% else %}
+                                                <strong style="color:#f00;font-size: 16px;margin: 2px 0 0;display: inline-block;">还没有提交速配方案</strong>
+                                            {% endif %}
+                                            {% if task_info.status == 2 %}
+                                                <br>
+                                                <a href="record.info?id={{ r.id }}" class="task-answer">设置速配方案</a>
+                                            {% endif %}
+                                        {% else %}
+                                            <strong style="color:#f00;font-size: 16px;margin: 2px 0 0;display: inline-block;">该方案只能速找发布者才能看到</strong>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <strong style="color:#f00;margin: 7px 0 0;font-size: 16px;display: inline-block;">还没有人接受此任务</strong>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="task-content">
+                <div class="content-title">
+                    <span>需求描述</span>
+                </div>
+                <div>{{ task_info.find_content|raw }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-modal-wrapper">
+        {% if task_info.status == 1 %}
+            <div tabindex="-1" role="dialog" id="jie-tuan-info" class="modal fade" modal-window="" animate="animate"
+                 data-backdrop="static">
+                <div class="modal-dialog" style="width: 400px;">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate ajax-form hide-before-send" action="get-task.action?id={{ task_info.id }}"
+                              method="post" novalidate="novalidate">
+                            <input type="hidden" name="fast_find_id" value="{{ task_info.id }}">
+
+                            <div class="modal-header">
+                                <h3 class="modal-title">提示</h3>
+                            </div>
+                            <div class="modal-body">
+                                <strong>确认接受此速找任务?</strong>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-warning">确认并开始速配</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% elseif task_info.status == 2 and MEMBER_INFO.id == task_info.member_id %}
+            <div tabindex="-1" role="dialog" id="task-done" class="modal fade" modal-window="" animate="animate"
+                 data-backdrop="static">
+                <div class="modal-dialog" style="width: 400px;">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate ajax-form hide-before-send"
+                              action="done-task.action?id={{ task_info.id }}"
+                              method="post"
+                              novalidate="novalidate">
+                            <input type="hidden" name="fast_find_id" value="{{ task_info.id }}">
+
+                            <div class="modal-header">
+                                <h3 class="modal-title">提示</h3>
+                            </div>
+                            <div class="modal-body">
+                                <strong>确认速配答案正确并完成此速找?</strong>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-warning">确认完成</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div tabindex="-1" role="dialog" id="task-answer" class="modal fade" modal-window="" animate="animate"
+             data-backdrop="static">
+            <div class="modal-dialog" style="width: 800px;">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate ajax-form" action="record.set-answer" method="post"
+                          novalidate="novalidate">
+                        <input type="hidden" name="fast_find_id" value="{{ task_info.id }}">
+                        <input type="hidden" name="id" id="task_record_id" value="0">
+
+                        <div class="modal-header">
+                            <h3 class="modal-title">请完整填写速找答案</h3>
+                        </div>
+                        <div class="modal-body answer-data-wrapper">
+                            <textarea name="answer_data" class="required" data-message-required="请填写速找答案"
+                                      id="form_content" cols="30" rows="10"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-warning">确认并保存答案</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ cdn }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ cdn }}/assets/ueditor/ueditor.all.js"></script>
+    <script>
+        $(function () {
+            var opt = {
+                theme: 'ycs', zIndex: 9, initialFrameHeight: 300, autoHeightEnabled: false, zIndex: 1200,
+                toolbars: [
+                    ['source', 'undo', 'redo', 'bold', 'italic', 'underline', 'fontborder',
+                        'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch',
+                        'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor',
+                        'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc',
+                        'insertimage', 'edittable', 'edittd', 'link', 'emotion']
+                ]
+            };
+            var ueMain = UE.getEditor('form_content', opt);
+
+            $('a.task-answer').onAjax(function (ret) {
+                ueMain.setContent(ret['data']['answer_data']);
+                $('#task_record_id').val(ret['data']['id']);
+                $('#task-answer').modal('show');
+            });
+            $('form.ajax-form').on('form.post.before', function () {
+                var frm = $(this), modal = frm.parents('.modal:eq(0)');
+                if (frm.hasClass('hide-before-send')) {
+                    modal.modal('hide');
+                }
+            }).formOnAjax(function (ret) {
+                modalLoading.msg('操作成功', 1500, function () {
+                    location.reload();
+                });
+            });
+        })
+    </script>
+{% endblock %}

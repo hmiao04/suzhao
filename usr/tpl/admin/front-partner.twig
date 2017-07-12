@@ -1,0 +1,157 @@
+{% extends "admin.twig" %}
+{% block title %}客户管理{% endblock %}
+{% block head_end %}
+    <style type="text/css">
+    </style>
+{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <div class="pull-left btn-group">
+                    {% for id,name in link_types %}
+                        <a href="?category_id={{ id }}" class="btn btn-default btn-sm {{ current_id == id ? 'active':'' }}">{{ name }}</a>
+                    {% endfor %}
+                </div>
+                <a href="#{{ current_id }}" data-toggle="modal" data-target="#saveData" class="pull-right">新增{{ current_id==1?'客户':'友情链接' }}</a>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-responsive">
+                    <thead>
+                    <tr>
+                        <th width="60">编号</th>
+                        <th width="250">名称</th>
+                        <th>地址</th>
+                        <th width="80">打开方式</th>
+                        <th width="80">状态</th>
+                        <th width="120">创建时间</th>
+                        <th width="60">序号</th>
+                        <th width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for l in link_list %}
+                        <tr>
+                            <td>{{ l.id }}</td>
+                            <td>{{ l.name }}</td>
+                            <td class="text-overflow">{{ l.url }}</td>
+                            <td>{{ l.target=='_blank'?'新窗口':(l.target=='_self'?'本窗口':'默认')}}</td>
+                            <td><span class="label {{ l.visible == 1 ?'bg-success':'bg-warning' }}">{{ l.visible == 1 ?'':'不' }}可见</span></td>
+                            <td>{{ l.updated|date('Y-m-d') }}</td>
+                            <td>{{ l.seq }}</td>
+                            <td>
+                                <a href="#" data-mode="edit" data-toggle="modal" data-target="#saveData"
+                                   data-url="partner.info?id={{ l.id }}">修改</a>
+                                <a href="partner.delete?id={{ l.id }}" class="ajax-post confirm">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveData" class="modal fade vue-ajax" modal-window="" animate="animate">
+            <div class="modal-dialog" style="">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res" action="partner.save" method="post">
+                        <input type="hidden" name="id" v-model="res.id">
+                        <input type="hidden" name="category_id" v-model="res.category_id">
+                        <div class="modal-header">
+                            <h3 class="modal-title">保存{{ current_id==1?'客户':'友情链接' }}数据</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>名称</label>
+                                    <input type="text" name="name" class="form-control required" v-model="res.name"
+                                           data-message-required="请填写名称" maxlength="50"
+                                           placeholder="">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>序号 <span class="sub-title">(数值越大排在前面)</span></label>
+                                    <input type="text" name="seq" class="form-control" v-model="res.seq" maxlength="2"
+                                           placeholder="可以输入0-99的值">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>打开方式</label>
+                                    <select name="target" class="form-control" v-model="res.target">
+                                        <option value="">默认</option>
+                                        <option value="_blank">新窗口</option>
+                                        <option value="_self">本窗口</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>是否可见</label>
+                                    <select name="visible" class="form-control m-b " v-model="res.visible">
+                                        <option value="1">可见</option>
+                                        <option value="0">隐藏</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>链接地址</label>
+                                    <input type="text" class="form-control" v-model="res.url"
+                                           data-message-required="必须填写链接地址" name="url"
+                                           placeholder="点击后跳转的地址">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>备注</label>
+                                    <input type="text" class="form-control" v-model="res.remark"
+                                           data-message-required="" name="remark"
+                                           placeholder="想要有什么要备注的内容">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label style="float: left;">链接图片</label>
+                                    <span id="the-image-up-w"style="display: inline-block;position: relative;width: 280px;float: left;"></span>
+                                    <br class="clear">
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <div class="fileinput-new thumbnail" style="width: 280px;height: 120px;" data-trigger="fileinput">
+                                            <img class="preview-img" v-bind:src="res.image" />
+                                        </div>
+                                        <div>
+                                                <span class="btn btn-default btn-file">
+                                                    <span class="fileinput-new">选择图片</span>
+                                                    <span class="fileinput-exists">更改</span>
+                                                    <input type="file" data-icon="false" class="required"
+                                                           data-message-required="请选择图片"
+                                                           error-label-wrapper="#the-image-up-w" data-name="link-image" accept="image/*">
+                                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveData">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+<script type="text/javascript">
+    $(function () {
+        var model = {res: {id:0, url:'', seq:'0', name:'',category_id:'{{ current_id }}', image:'', target:'', visible:'1', updated:'', remark:'', status:''}};
+        ycs.initVue(model,'#saveData');
+    });
+</script>
+<script>
+
+</script>
+{% endblock %}

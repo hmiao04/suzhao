@@ -1,0 +1,51 @@
+{% extends 'layout.twig' %}
+{% block title %}上传分享图片{% endblock %}
+{% block head_end %}
+    <link rel="stylesheet" href="{{ SITE_URL }}/assets/ueditor/third-party/webuploader/webuploader.css">
+    <link rel="stylesheet" href="{{ SITE_URL }}/assets/js/upload.style.css">
+{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-heading">
+            <div class="panel-title">上传图片到 <span class="text-primary">【{{ current_cate.cate_name }}】</span> 中</div>
+        </div>
+        <div class="panel-body">
+            <div id="uploader" class="wu-example">
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>或将图片拖到这里，单次最多可选300张</p>
+                    </div>
+                </div>
+                <div class="picture-content" style="display:none;">
+                    <div class="content-editor">
+                        <textarea id="picture-content-editor"></textarea>
+                    </div>
+                </div>
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div>
+                    <div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div>
+                        <div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script>var uploadUrl = '/file/upload?action=picture&cate_id={{ current_id }}&file_key=file';</script>
+    <script src="{{ SITE_URL }}/assets/ycs/common.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/third-party/webuploader/webuploader.js"></script>
+    <script src="{{ SITE_URL }}/assets/js/upload.process.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.js"></script>
+    <script>
+        $(function(){
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends 'admin.twig' %}
+{% block title %}广告管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                说明:排序的数值越高，排序越靠前！
+                <a href="##" class="pull-right" data-toggle="modal" data-target="#editCategory">新增分类</a>
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th width="160">分类ID</th>
+                        <th>分类名称</th>
+                        <th width="160">分类排序</th>
+                        <th width="200">是否展示</th>
+                        <th width="260">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in cateList %}
+                        <tr>
+                            <td>{{ c.CategoryId }}</td>
+                            <td>{{ c.CategoryName }}</td>
+                            <td>{{ c.SortScore }}</td>
+                            <td>
+                                <span class="label {{ c.State == 1?'bg-success':'bg-warning' }}" title="Disabled">{{ c.State == 1?'显示':'隐藏' }}</span>
+                            </td>
+                            <td>
+                                <a href="##" data-mode="edit" data-toggle="modal" data-target="#editCategory" data-cate-id="{{ c.CategoryId }}">修改</a>
+                                <a href="../api/ads.category.delete?cateId={{ c.CategoryId }}" class="ajax-post confirm">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="editCategory" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 400px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-cate">
+                        <div class="modal-header">
+                            <h3 class="modal-title">数据</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>分类名称</label>
+                                    <input type="text" class="form-control required" v-model="cate.CategoryName"
+                                           data-message-required="请填写分类名称" maxlength="50"
+                                           placeholder="最多允许填写50个字">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>分类排序</label>
+                                    <input type="text" class="form-control" value="0" v-model="cate.SortScore">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>是否显示</label>
+                                    <select v-model="cate.State" class="form-control m-b">
+                                        <option value="1">显示</option>
+                                        <option value="0">隐藏</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="the-error-cn" style="position: relative;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveCategory">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        $(function(){
+            var editCateData = {
+                cate:{
+                    CategoryId:0,
+                    CategoryName:"",
+                    State:1,
+                    SortScore:0
+                }
+            };
+            var editApp = new Vue({
+                el: '#editCategory',
+                data:editCateData,
+                methods:{
+                    saveCategory:function(){
+                        var frm = $('form.save-cate');
+                        if(frm.valid()){
+                            $.post('../api/ads.category.save',editCateData.cate,function(ret){
+                                if(ret['code'] == 0){
+                                    location.reload();
+                                }else{
+                                    alert(ret['message']);
+                                }
+                            },'json');
+                        }
+                        return  false;
+                    }
+                }
+            });
+            $('#editCategory').on('show.bs.modal',function(e){
+                var modal = $(this);
+                var link = $(e.relatedTarget),mode = link.attr('data-mode');
+                modal.find('label.error').html('');
+                if(mode == 'edit'){
+                    modal.find('.modal-title').html('修改分类数据')
+                    $.get('../api/ads.category.detail',{'cateId':link.attr('data-cate-id')},function(ret){
+                        if(ret['code'] == 0){
+                            editCateData.cate = ret['data'];
+                        }else{
+                            alert(ret['message']);
+                        }
+                    },'json');
+                }else{
+                    modal.find('form').get(0).reset();
+                    modal.find('.modal-title').html('新增分类')
+                }
+            });
+
+
+            $('a.ajax-post').on('click',function(){
+                var me = $(this),url = me.attr('href');
+                if(!url||url.substr(0,1) == '#') return false;
+                if(me.hasClass('confirm') && !confirm('删除数据后将无法恢复,请确认是否继续?')){
+                    return false;
+                }
+                $.get(url,function(ret){
+                    if(ret['code'] == 0) location.reload();
+                    else alert(ret['message']);
+                },'json').error(function(){
+                    alert('数据请求失败！');
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

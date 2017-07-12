@@ -1,0 +1,62 @@
+{% extends 'layout.twig' %}
+{% block title %}我的团购{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-title">
+            <h3 class=" pull-left">我的团购</h3>
+            <a href="../tuan/new.html" target="publish-tuan" class="pull-right">发起团购</a>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-bordered">
+                    <thead>
+                    <tr>
+                        <th>图片</th>
+                        <th>团购标题</th>
+                        <th width="150">发起时间</th>
+                        <th width="80">团购状态</th>
+                        <th width="130">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in gbList %}
+                        <tr>
+                            <td><img style="width: 80px;height:80px;" src="{{ res_url }}{{ a.main_image }}?resize/h=100"
+                                     alt=""></td>
+                            <td style="vertical-align: middle;">
+                                <a href="{{ SITE_URL }}/tuan/detail.html?id={{ a.id }}"
+                                   target="tuan_{{ a.id }}">{{ a.title }}</a>
+                            </td>
+                            <td>{{ a.create_time|date('Y-m-d H:i') }}</td>
+                            <td><span class="label {{ a.group_status == 3 ?'bg-success':'bg-info' }}">
+                        {{ a.group_status == 1 ?'进行中':(a.group_status == 2?'已被接':(a.group_status == 4?'尚未发起':'已完结')) }}</span>
+                            </td>
+                            <td>
+                                {% if a.group_status == 1 %}{#发起中...#}
+                                    <a href="../tuan/cancel?id={{ a.id }}" class="ajax-post delete-link confirm">取消</a>
+                                {% elseif a.group_status == 4 %}{#尚未发起可以删除...#}
+                                    <a href="../tuan/delete?id={{ a.id }}" class="ajax-post delete-link confirm">删除</a>
+                                    <a href="../tuan/publish?id={{ a.id }}" class="ajax-post delete-link confirm">发起</a>
+                                    <a href="../tuan/new.html?id={{ a.id }}">编辑</a>
+                                {% else %}{#已经被接不能操作...#}
+                                    <a href="../tuan/new.html?id={{ a.id }}&action=re_save">再起发起</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="data-table-paginate">
+                    <div class="col-xs-6">
+                        <div class="data-table-info">总计 {{ totalPage }} 页 共 {{ totalCount }} 条记录</div>
+                    </div>
+                    <div class="col-xs-6">
+                        {{ pageString|raw }}
+                    </div>
+                    <br class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

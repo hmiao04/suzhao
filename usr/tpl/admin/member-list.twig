@@ -1,0 +1,254 @@
+{% extends 'admin.twig' %}
+{% block title %}会员查询 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <form class="form-inline pull-left ajax-query-form" role="form"
+                      action="?act=search"target="#admin_list_wrapper">
+                    <input type="hidden" name="act" value="search">
+                    <div class="form-group">
+                        <input type="text" name="m#name-like" class="form-control" placeholder="会员名字">
+                    </div>
+                    <div class="form-group hidden">
+                        <input type="text" name="account" class="form-control" placeholder="登录账号">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="gender">
+                            <option value="">全部性别</option>
+                            <option value="0">男</option>
+                            <option value="1">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="c#certification_status">
+                            <option value="">请选择认证状态</option>
+                            <option value="0">未认证</option>
+                            <option value="3">已认证</option>
+                            <option value="2">申请中</option>
+                            <option value="1">未通过认证</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" name="c#type">
+                            <option value="">请选择认证类型</option>
+                            <option value="person">个人认证</option>
+                            <option value="company">企业认证</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">搜索</button>
+                    </div>
+                </form>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper ajax-data-wrapper" id="admin_list_wrapper">
+                {% include 'member-list-item.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveData" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res" action="../api/member.save" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">数据</h4>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label for="member-name">姓名</label>
+                                    <input type="text" class="form-control required" placeholder="请输入会员的姓名" v-model="m.name"
+                                           data-message-required="请输入会员的姓名" name="name">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="member-name">出生日期</label>
+                                    <div class="input-group date">
+                                        <input type="text" class="form-control required" placeholder="请选择出生日期" readonly="readonly"
+                                               data-message-required="请选择出生日期" v-model="m.birth_date" name="birth_date" value="">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                    </div>
+                                    <label id="birth_date-error" class="error" for="birth_date"></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label for="member-name">手机号码</label>
+                                    <input type="text" class="form-control  required regex" placeholder="请输入会员的手机号码"
+                                           data-regex="^1[\d+]{10}$" data-message-regex="请输入正确的手机号码" name="phone"
+                                           data-message-required="请输入会员的手机号码" v-model="m.phone">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>性别</label>
+                                    <div class="radio">
+                                        <label><input type="radio" name="sex" checked="checked" value="0" v-model="m.sex">男</label>
+                                        <label style="margin-left: 20px;"><input type="radio" name="sex" value="1" v-model="m.sex">女</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label for="member-name">身份证号</label>
+                                    <input type="text" class="form-control regex" placeholder="请输入会员的身份证号"
+                                           data-regex="^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$"
+                                           data-message-regex="请输入正确的身份证号"
+                                           data-message-required="请输入会员的身份证号" v-model="m.idcard">
+                                </div>
+                            </div>
+                            <fieldset>
+                                <h4>认证信息</h4>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">归属地:</label><span>${m.address}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">注册时间:</label><span>${m.register_time}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">注册人:</label><span>${m.creator.account}</span>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                            <div id="the-error-cn" style="position: relative;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveData">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div tabindex="-1" role="dialog" id="member-account" class="modal fade modal-ajax-load" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res">
+                        <div class="modal-header" style="border-bottom: none;    padding-bottom: 0;">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title">用户账号信息</h4>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="the-error-cn" style="position: relative;"></div>
+                            <div class="modal-ajax-wrapper"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div tabindex="-1" role="dialog" id="member-certification" class="modal fade modal-ajax-load" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                        <div class="modal-header" style="border-bottom: none;    padding-bottom: 0;">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title">认证信息</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="the-error-cn" style="position: relative;"></div>
+                            <div class="modal-ajax-wrapper"></div>
+                        </div>
+                        <div class="modal-footer hidden">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+    $(function(){
+        var editData = {
+            m: {
+                id:0,
+                name:'',
+                sex:'',
+                birth_date:'',
+                idcard:'',
+                phone:'',
+                company_id:'',
+                province:'',
+                city:'',
+                country:'',
+                register_by:'',
+                state:'',
+                area_name:'',
+                creator:{
+                    nick_name:''
+                }
+            }
+        };
+        var w = $('.city-area-wrapper'),wh = $('.search-city-wrapper');
+        Vue.config.delimiters = ['${', '}'];
+        var editApp = new Vue({
+            el: '#saveData',
+            data: editData,
+            methods: {
+                saveData: function () {
+                    var frm = $('form.save-res');
+                    if (frm.valid()) {
+                        ycs.post(frm.attr('action'), editData.m, function (ret) {
+                            if (ret['code'] == 0) {
+                                location.reload();
+                            } else {
+                                alert(ret['message']);
+                            }
+                        }, 'json');
+                    }
+                    return false;
+                }
+            }
+        });
+        $('#saveData').on('show.bs.modal', function (e) {
+            var modal = $(this);
+            var link = $(e.relatedTarget), mode = link.attr('data-mode');
+            if(link.is('a')){
+                modal.find('label.error').html('');
+                if (mode == 'edit') {
+                    modal.find('.modal-title').html('修改数据')
+                    $.get(link.attr('data-url'), function (ret) {
+                        if (ret['code'] == 0) {
+                            editData.m = ret['data'];
+                        } else {
+                            alert(ret['message']);
+                        }
+                    }, 'json');
+                } else {
+                    modal.find('form').get(0).reset();
+                }
+            }
+        });
+
+        $('.modal-ajax-load').on('show.bs.modal', function (e) {
+            var modal = $(this);
+            var link = $(e.relatedTarget), content = modal.find('.modal-ajax-wrapper');
+            content.html('<p style="text-align: center;">数据加载中...</p>')
+            $.get(link.attr('data-url'), function (s) {
+                try{
+                    var j = JSON.parse(s);
+                    if(j['code'] == 0) content.html(j['data']);
+                    else content.html(j['message']);
+                }catch(e){
+                    content.html(s);
+                }
+            }, 'html');
+        });
+    });
+    </script>
+{% endblock %}

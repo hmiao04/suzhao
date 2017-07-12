@@ -1,0 +1,40 @@
+{% extends '../page.layout.twig' %}
+
+{% block app_content %}
+    <div class="panel container">
+        <div class="list-header">
+            <div class="pull-left">
+                {% for c in cateList %}
+                    <a href="?cate_id={{ c.id }}" class="{{ c.id == current_id?'selected':'' }}">{{ c.cate_name }}</a>
+                {% endfor %}
+            </div>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                {% for pic in picture_list %}
+                    <div class="col-xs-6 col-md-3">
+                        <a href="show-{{ pic.id|id_encode }}.html">
+                            <div class="picture-wrapper">
+                                 <a href=""><img src="{{ SITE_URL }}/assets/images/tmp/p1.jpeg" alt=""></a>
+                            </div>
+                            <div class="picture-tag">
+                                <p class="text-danger" style="margin:0;">流行元素</p>
+                                <p>{{ pic.picture_tag }}</p>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="data-table-paginate">
+                <div class="col-xs-6">
+                    <div class="data-table-info">总计 {{ totalPage }} 页  共 {{ totalCount }} 个分享</div>
+                </div>
+                <div class="col-xs-6">
+                    {{ pageString|raw }}
+                </div>
+                <br class="clear">
+            </div>
+        </div>
+    </div>
+{% endblock %}

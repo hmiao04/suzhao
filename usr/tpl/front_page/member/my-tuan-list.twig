@@ -1,0 +1,74 @@
+{% extends 'layout.twig' %}
+{% block title %}我参加的团购{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-title ">
+            <h3 class="pull-left">我参加的团购</h3>
+            <a href="##" class="pull-right" data-toggle="modal" data-target="#saveRes">发起团购</a>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-bordered">
+                    <thead>
+                    <tr>
+                        <th>图片</th>
+                        <th>团购信息</th>
+                        <th width="200">接团信息</th>
+                        <th width="100">接团状态</th>
+                        <th width="150">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in gbList %}
+                        <tr>
+                            <td><img style="width: 80px;height:80px;" src="{{ res_url }}{{ a.main_image }}?resize/h=100" alt=""></td>
+                            <td style="vertical-align: middle;">
+                                <a href="../tuan/detail.html?id={{ a.tuan_id }}" target="_blank">{{ a.tuan_title }}</a>
+                                <br>
+                                <span>发起时间:{{ a.tuan_time|date('Y-m-d H:i') }}</span>
+                            </td>
+                            <td>
+                                <span>接团金额: <strong class="label text-danger">{{ a.money|number_format(2) }}元</strong></span><br>
+                                <span>接团时间:{{ a.create_time|date('Y-m-d H:i') }}</span>
+                            </td>
+                            <td>
+                                {% if a.group_status == 3 %}
+                                    <span class="label {{ a.status == 2 ?'bg-primary':'bg-info' }}">
+                                        {{ a.status == 1 ?'失败':'成功' }}</span>
+                                {% else %}
+                                    <span class="label bg-info">待选</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if a.group_status == 3 %}
+                                <a href="../tuan/join.list?id={{ a.tuan_id }}" class="ajax-load" data-url="tuan.join?id=31" data-modal-title="参团信息"
+                                   data-toggle="modal" data-target="#modal-ajax">参团人员信息</a>
+                                {% endif %}
+                                {#<a href="cancel?id={{ a.id }}" class="ajax-post delete-link confirm">取消</a>#}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="data-table-paginate">
+                    <div class="col-xs-6">
+                        <div class="data-table-info">总计 {{ totalPage }} 页  共 {{ totalCount }} 条记录</div>
+                    </div>
+                    <div class="col-xs-6">
+                        {{ pageString|raw }}
+                    </div>
+                    <br class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="modal-ajax" class="modal fade" modal-window="" animate="animate">
+            <div class="modal-dialog" style="">
+                <div class="modal-content" modal-transclude="">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

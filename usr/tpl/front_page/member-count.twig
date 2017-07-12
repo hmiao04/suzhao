@@ -1,0 +1,169 @@
+{% extends "member.layout.twig" %}
+{% block app_title %}指标统计{% endblock %}
+{% block app_content %}
+    <div class="panel">
+        <div class="panel-title">
+            <h2>评分对比</h2>
+            <div class="pull-right">
+                <form action="" class=" form-inline">
+                    <div class="form-group">
+                        <label>评估时间:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-refresh" data-chart="1">刷新</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel-body" id="chart-1" style="height: 400px;"></div>
+    </div>
+    <div class="panel">
+        <div class="panel-title">
+            <h2>健康走势</h2>
+            <div class="pull-right">
+                <form action="" class=" form-inline">
+                    <div class="form-group">
+                        <label>开始时间:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>结束时间:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>分类:</label>
+                        <select name="fl" id="fl" class="form-control">
+                            <option>血常规</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-refresh" data-chart="3">刷新</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel-body" id="chart-3" style="height: 400px;"></div>
+    </div>
+    <div class="panel">
+        <div class="panel-title">
+            <h2>指标趋势</h2>
+            <div class="pull-right">
+                <form action="" class=" form-inline">
+                    <div class="form-group">
+                        <label>开始时间:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>结束时间:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>分类:</label>
+                        <select name="fl" id="fl" class="form-control">
+                            <option>血常规</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>指标:</label>
+                        <select name="zb" id="zb" class="form-control">
+                            <option>血红蛋白</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-refresh" data-chart="2">刷新</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel-body" id="chart-2" style="height: 400px;"></div>
+    </div>
+{% endblock %}
+{% block body_end %}
+    <script src="{{ SITE_URL }}/static/scripts/echarts.common.min.js"></script>
+    <script>
+        $(function(){
+            var items = '总分,测试项目,血常规,水及电解质代谢,血液凝集系统,肺等相关指标,氧气转运及利用,心脏及其动力学指标,肝、胆、胃等相关指标,肾脏相关指标,生殖系统,内分泌系统,糖代谢,脂代谢,情绪指数（快乐指数）,大脑及其相关指标,运动指标,免疫力活性指标,皮肤测试指标,健康透支指标'.split(',');
+            var createRandomArray = function(count,max,min){
+                if(typeof(min) != "number") min = 1;
+                var ret = [],n = max - min;
+                for(var i=0;i<count;i++){
+                    ret.push(Math.round(Math.random() * n) + min);
+                }
+                return ret;
+            },theme = ['#1EC1B8','#53AAF9'];
+
+            var opt={
+                tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+                color:theme,
+                legend:{data:['个人得分','人群得分']},
+                grid:{left:'3%',right:'4%',bottom:'22%',containLabel:true},
+                xAxis:[{type:'category',data:items,axisLabel:{rotate:45,interval:0},splitLine:{}}],
+                yAxis:[{type:'value'}],
+                series:[
+                    {name:'个人得分',type:'bar',data:createRandomArray(items.length,200)},
+                    {name:'人群得分',type:'bar',data:createRandomArray(items.length,200)}
+                ]
+            };
+            var dataTimes = ['2015-2-12','2015-3-12','2015-4-12','2015-6-12','2015-12-12','2016-2-12','2016-12-12','2017-1-12'];
+            var opt2 = {
+                color:['#5DACFF'],
+                tooltip: {trigger: 'axis',axisPointer: {animation: false}
+//                    ,formatter: function (params) {return params[0]['name']+":"+params[0]['data'];}
+                },
+                grid:{top:'5%',left:'3%',right:'3%',bottom:'2%',containLabel:true},
+                xAxis: {
+                    type: 'category',boundaryGap : false,data:dataTimes,
+                    axisLabel:{textStyle: {color: '#000'}},
+                    axisLine:{lineStyle:{color:'#1EC1B8'}},
+                    splitLine: {show: true}
+                },
+                yAxis: {axisLabel:{textStyle: {color: '#000'}},axisLine:{lineStyle:{color:'#1EC1B8'}},splitLine: {show: true},type: 'value'},
+                series: [{
+                    name: '模拟数据',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {normal: {}},
+                    showSymbol: false,
+                    hoverAnimation: false,
+                    data: createRandomArray(dataTimes.length,15,10)
+                }]
+            };
+            var opt3 = $.extend(true,{},opt2);
+            opt3['color'] = ['#1EC1B8'];
+            opt3['series'][0]['data'] = createRandomArray(dataTimes.length,15,10)
+            var chart1 = echarts.init(document.getElementById('chart-1'));
+            var chart2 = echarts.init(document.getElementById('chart-2'));
+            var chart3 = echarts.init(document.getElementById('chart-3'));
+            $(window).on('resize',function(){
+                chart1.resize();
+                chart2.resize();
+                chart3.resize();
+            });
+            chart1.setOption(opt);
+            chart2.setOption(opt2);
+            chart3.setOption(opt3);
+            $('.btn-refresh').on('click',function(){
+                var _data = null;
+                if($(this).attr('data-chart') == '2'){
+                    _data = {
+                        series: [
+                            {data: createRandomArray(dataTimes.length,15,10)}
+                        ]
+                    };
+                    chart2.setOption(_data);
+                }else if($(this).attr('data-chart') == '3'){
+                    _data = {
+                        series: [
+                            {data: createRandomArray(dataTimes.length,15,10)}
+                        ]
+                    };
+                    chart3.setOption(_data);
+                }else{
+                    _data = {
+                        series: [
+                            {name:'个人得分',type:'bar',data:createRandomArray(items.length,200)},
+                            {name:'人群得分',type:'bar',data:createRandomArray(items.length,200)}
+                        ]
+                    };
+                    chart1.setOption(_data);
+                }
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

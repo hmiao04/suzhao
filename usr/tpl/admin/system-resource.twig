@@ -1,0 +1,184 @@
+{% extends 'admin.twig' %}
+{% block title %}系统资源管理 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <form class="form-inline pull-left" role="form" action="?act=search">
+                    <input type="hidden" name="act" value="search">
+                    <div class="form-group">
+                        <input type="text" name="res_name" class="form-control" placeholder="搜索资源名称">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">搜索</button>
+                    </div>
+                </form>
+                <a href="##" class="pull-right" data-toggle="modal" data-target="#saveRes">新增资源</a>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th>资源ID</th>
+                        <th>资源名称</th>
+                        <th>资源标识符</th>
+                        <th>资源内容</th>
+                        <th>类型</th>
+                        <th>排序</th>
+                        <th>状态</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for l in resList %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ l.res_name }}</td>
+                            <td>{{ l.res_id }}</td>
+                            <td>{{ l.res_url }}</td>
+                            <td>{{ l.type }}</td>
+                            <td>{{ l.sort }}</td>
+                            <td><span class="label {{ l.state == 1 ?'bg-success':'bg-warning' }}">{{ l.state == 1 ?'启用':'禁用' }}</span></td>
+                            <td>
+                                {% if l.parent_id==0 %}<a href="?pid={{ l.id }}">子级资源</a>{% endif %}
+                                <a href="##{ a.AdsId }}" data-mode="edit"  data-toggle="modal" data-id="{{ l.id }}" data-target="#saveRes">修改</a>
+                                <a href="delete?adsId={{ a.AdsId }}">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveRes" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res">
+                        <div class="modal-header">
+                            <h3 class="modal-title">数据</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>资源名称</label>
+                                    <input type="text" name="res_name" class="form-control required" v-model="res.res_name"
+                                           data-message-required="请填写资源名称" maxlength="50"
+                                           placeholder="最多允许填写50个字">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>资源标识符</label>
+                                    <input type="text" class="form-control required" v-model="res.res_id"
+                                           data-message-required="请填写资源标识符" maxlength="50"
+                                           placeholder="最多允许填写50个字">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>资源图标</label>
+                                    <input type="text" name="res_icon" class="form-control"
+                                           data-message-required="" maxlength="50" v-model="res.res_icon"
+                                           placeholder="最多允许填写50个字">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>是否启用</label>
+                                    <select v-model="res.state" name="state" class="form-control m-b">
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>排序</label>
+                                    <input type="text" class="form-control" v-model="res.sort"
+                                           placeholder="数字越大排序越靠前">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>资源类型</label>
+                                    <select v-model="res.type" name="type" class="form-control m-b">
+                                        {% for k,t in typeList %}
+                                            <option value="{{ k }}">{{ t }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>资源内容</label>
+                                    <input type="text" name="res_url" class="form-control required" v-model="res.res_url"
+                                           data-message-required="请填写资源内容" maxlength="255"
+                                           placeholder="最多允许填写255个字">
+                                </div>
+                            </div>
+                            <div id="the-error-cn" style="position: relative;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveCategory">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        var editData = {
+            res:{
+                id:0,
+                res_name:'',
+                res_id:'',
+                state:1,
+                res_url:'',
+                res_icon:'',
+                sort:0,
+                type:'m',
+                parent_id:'{{ parentId }}'
+            }
+        };
+        var editApp = new Vue({
+            el: '#saveRes',
+            data:editData,
+            methods:{
+                saveCategory:function(){
+                    var frm = $('form.save-res');
+                    if(frm.valid()){
+                        $.post('../api/resource.save',editData.res,function(ret){
+                            if(ret['code'] == 0){
+                                location.reload();
+                            }else{
+                                alert(ret['message']);
+                            }
+                        },'json');
+                    }
+                    return  false;
+                }
+            }
+        });
+        $('#saveRes').on('show.bs.modal',function(e){
+            var modal = $(this);
+            var link = $(e.relatedTarget),mode = link.attr('data-mode');
+            modal.find('label.error').html('');
+            if(mode == 'edit'){
+                modal.find('.modal-title').html('修改资源数据')
+                $.get('../api/resource.detail',{'resId':link.attr('data-id')},function(ret){
+                    if(ret['code'] == 0){
+                        editData.res = ret['data'];
+                    }else{
+                        alert(ret['message']);
+                    }
+                },'json');
+            }else{
+                modal.find('form').get(0).reset();
+                modal.find('.modal-title').html('新增资源')
+            }
+        });
+    </script>
+{% endblock %}

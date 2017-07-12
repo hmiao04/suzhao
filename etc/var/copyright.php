@@ -1,0 +1,1 @@
+<p style="text-align: center">Product by <a href="http://dev.xiaoyan.me">xiaoyan.me</a></p>

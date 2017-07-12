@@ -1,0 +1,41 @@
+{% extends '../page.layout.twig' %}
+{% block block_class_name %}member{% endblock %}
+{% block app_content %}
+    <div class="member_main clearfix">
+        <!-- 会员中心左边菜单部分 -->
+        <!-- 会员中心左侧菜单栏 -->
+        <div class="contain_left">
+            <div class="menu-wrapper">
+                <h4>个人中心<span>{% block app_title %}{% endblock %}</span></h4>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="{{ page_path =='index'?'active':'' }}"><a href="{{ SITE_URL }}/member/">个人资料</a></li>
+                    <li class="{{ page_path =='task-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/task.html">我的速找</a></li>
+                    <li class="{{ page_path =='my-task-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/task-my.html">我接的速找</a></li>
+                    <li class="{{ page_path =='tuan-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/tuan.html">我发布的团购</a></li>
+                    {% if MEMBER_TYPE == 'company' %}
+                    <li class="{{ page_path =='my-tuan-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/tuan-accept.html">接团列表</a></li>
+                    {% endif %}
+                    <li class="{{ page_path =='picture-list'?'active':'' }}"><a  href="{{ SITE_URL }}/member/picture.html">我的分享图片</a></li>
+                    <li class="{{ page_path =='tuan-join'?'active':'' }}"><a
+                                href="{{ SITE_URL }}/member/tuan-join.html">我参加的团购</a></li>
+                    <li class="{{ page_path =='bill-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/bill.html">我的账单</a></li>
+
+                    {% if MEMBER_CERT %}
+                        <li class="{{ page_path =='goods-list'?'active':'' }}"><a
+                                    href="{{ SITE_URL }}/member/goods.html" data-url="goods">我的商品</a></li>
+                    {% endif %}
+                    <li class="{{ page_path =='bill-list'?'active':'' }}"><a href="{{ SITE_URL }}/member/bill.html">我的订单</a></li>
+                    <li class="{{ page_path =='update'?'active':'' }}"><a
+                                href="{{ SITE_URL }}/company/update.html" data-url="goods">完善商家信息</a></li>
+                    <li class="{{ page_path =='vip'?'active':'' }}"><a href="{{ SITE_URL }}/member/vip.html">实地认证</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="contain_right">
+            {% block member_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script>ycj('member-init').delayRun(20);</script>
+{% endblock %}

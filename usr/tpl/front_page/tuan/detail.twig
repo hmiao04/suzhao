@@ -1,0 +1,259 @@
+{% extends '../page.layout.twig' %}
+{% block title %}{{ tuanInfo.title }}{% endblock %}
+{% block block_class_name %}goods-info-app tuan-info-app{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="goods-info clearfix">
+            <div class="pull-left">
+                <div class="tb-booth tb-pic tb-s310">
+                    <a href="{{ res_url }}{{ tuanInfo.main_image }}?o=webp">
+                        <img src="{{ res_url }}{{ tuanInfo.main_image }}?resize/w=420/h=420" rel="{{ res_url }}{{ tuanInfo.main_image }}?o=webp" />
+                    </a>
+                </div>
+            </div>
+            <div class="" style="margin-left:430px;">
+                <h1 class="goods-title tuan-title">{{ tuanInfo.title }}</h1>
+                <div class="tuan-info">
+                    <div class="tuan-info-item">
+                        <span class="title">商品名称:</span>{{ goodsInfo.title }}
+                    </div>
+                    <div class="tuan-info-item">
+                        <span class="title">商品价格:</span>{{ goodsInfo.price_sale }}
+                    </div>
+                    <div class="tuan-info-item">
+                        <span class="title">团购开始时间:</span>{{ tuanInfo.create_time|date('Y-m-d') }}
+                    </div>
+                    {% if tuanInfo.end_time %}
+                    <div class="tuan-info-item">
+                        <span class="title">团购结束时间:</span>{{ tuanInfo.end_time|date('Y-m-d') }}
+                    </div>
+                    {% endif %}
+                    <div class="tuan-info-item">
+                        <span class="title">参团数量:</span>{{ joinData.count }} 件
+                    </div>
+                    <div class="tuan-info-item">
+                        <span class="title">团购状态:</span>
+                        {% if tuanInfo.group_status == 1 %}发起中...
+                        {% elseif tuanInfo.group_status == 2 %}已被接
+                        {% elseif tuanInfo.group_status == 3 %}已完结
+                        {% else %}未知
+                        {% endif %}
+                    </div>
+                    {% if bidding %}
+                    <div class="tuan-info-item">
+                        <span class="title">接团商家:</span>{{ tuanInfo.end_time|date('Y-m-d') }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tuan-action">
+                    {% if tuanInfo.group_status  < 3 %}
+                        {% if bidding  %}
+                        {% else %}
+                        {% if tuanInfo.group_status == 2 %}
+                            {% if joined %}<span class="btn btn-success" style="width: 150px;">已经接团</span>
+                            {% else %}<span class="btn btn-success" style="width: 200px;">此团已经被接无法参团</span>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% if joined %}javascript:void(0);{% else %}join.check?id={{ tuanInfo.id }}{% endif %}" id="btn-tuan-join"
+                               class="btn {{ joined?'btn-tuan-success btn-success':'btn-danger btn-tuan-join' }}">{{ joined?'已':'立即' }}参团</a>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if tuanInfo.member_id != MEMBER_INFO.id %}
+                            {% if MEMBER_TYPE == 'company' %}
+                                {% if bidding %}
+                                    <span class="btn btn-success" style="width: 150px;">已经接团</span>
+                                {% else %}
+                                    <a href="join.get?id={{ tuanInfo.id }}" class="btn btn-info btn-tuan-join" id="jietuan">接团</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <span class="btn btn-success" style="width: 200px;">团购已经结束或者尚未发起</span>
+                    {% endif %}
+
+                </div>
+                <div class="tuan-require">
+                    <div class="title">团购要求:</div>
+                    <p>{{ tuanInfo.require }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="goods-content">
+            <div class="content-title">
+                <span>团购商品详情</span>
+            </div>
+            <div class="content-wrapper">
+                {{ goodsInfo.goods_content|raw }}
+            </div>
+        </div>
+        <div class="dialog-modal-wrapper">
+            <div tabindex="-1" role="dialog" id="join-group" class="modal fade" modal-window="" animate="animate" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate submit-join-data" action="join.submit?id={{ tuanInfo.id }}" method="post" novalidate="novalidate">
+                            <div class="modal-header">
+                                <h3 class="modal-title">填写信息立即参团</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        <label for="member-name">购买价格</label>
+                                        <input type="text" name="buy_price" value="{{ goodsInfo.price_sale }}" class="form-control required need-number data-float"  placeholder="请输入购买价格" data-message-required="请输入购买价格" aria-required="true">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="member-name">购买数量</label>
+                                        <input type="text" name="buy_count" value="1" class="form-control required need-number" placeholder="请输入购买数量" data-message-required="请输入购买数量" aria-required="true">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        <label for="member-name">收货人姓名</label>
+                                        <input type="text" name="receiver" class="form-control required" placeholder="请输入收货人姓名" data-message-required="请输入收货人姓名" aria-required="true">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="member-name">联系人电话</label>
+                                        <input type="text" name="telephone" class="form-control required" placeholder="请输入联系人电话" data-message-required="请输入联系人电话" aria-required="true">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">收货地址</label>
+                                        <textarea type="text" name="shipping_address" class="form-control required" placeholder="请输入收货地址"
+                                                  data-message-required="请输入收货地址" aria-required="true"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">备注</label>
+                                        <textarea type="text" name="remarks" class="form-control" placeholder="可以填写一些备注"
+                                                  data-message-required="请输入收货地址" aria-required="true"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-danger btn-submit-join">
+                                    <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 确认信息并参团
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div tabindex="-1" role="dialog" id="jie-tuan-info" class="modal fade" modal-window="" animate="animate" data-backdrop="static">
+                <div class="modal-dialog" style="width: 400px;">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate jie-tuan" action="jie-tuan?id={{ tuanInfo.id }}" method="post" novalidate="novalidate">
+                            <div class="modal-header">
+                                <h3 class="modal-title">填写信息立即接团</h3>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="tuan-info" style="background: #eee;padding: 5px 7px;margin-bottom: 5px;line-height: 20px;">
+                                    <span>团购人数:</span><span>{{ join_info.totalCount }}</span><br>
+                                    <span>团购总金额:</span><span>{{ join_info.totalCount > 0?join_info.totalMoney:0 }}元</span>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label for="member-name">请输入你的接团金额</label>
+                                        <input type="text" name="money" class="form-control need-number required" placeholder="请输入你的接团金额"
+                                                  data-message-required="请输入你的接团金额" aria-required="true">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-danger btn-submit-join">
+                                    <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 确认信息并接团
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div tabindex="-1" role="dialog" id="join-group-success" class="modal fade" modal-window="" animate="animate" data-backdrop="static">
+                <div class="modal-dialog modal-sm" style="margin-top: 20%;width:500px;">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate submit-join-data" action="join.submit?id={{ tuanInfo.id }}" method="post" novalidate="novalidate">
+                            <div class="modal-body text-center">
+                                <h3>参团信息已经保存成功！</h3>
+                                <h4>请继续支付以继续完成参团</h4>
+                                <div class="text-center" style="margin-top:30px;margin-botton:10px;">
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">稍候支付</button>
+                                    <a href="##" id="pay_url" data-pay-url="{{ SITE_URL }}/pay/pay.html?bill_sn="
+                                       class="btn btn-danger btn-submit-join" target="pay_right_now">立即支付</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script>
+        $(function(){
+            $('#btn-tuan-join').on('click',function(){
+                var e = $(this);
+                if(e.attr('data-joined')){
+                    return false;
+                }
+                modalLoading.show('检查参团信息中...');
+                $.post(e.attr('href'),function(ret){
+                    if(ret['code'] == 0){
+                        modalLoading.hide();
+                        $('#join-group').modal('show');
+                    }else{
+                        modalLoading.msg(ret['message']);
+                    }
+                },'json').error(function(){modalLoading.hide();});
+                return false;
+            });
+            $('#jietuan').on('click',function(){
+                var e = $(this);
+                if(e.attr('data-joined')){
+                    return false;
+                }
+                modalLoading.show('检查接团信息中...');
+                $.post(e.attr('href'),function(ret){
+                    if(ret['code'] == 0){
+                        modalLoading.hide();
+                        $('#jie-tuan-info').modal('show');
+                    }else{
+                        modalLoading.msg(ret['message']);
+                    }
+                },'json').error(function(){modalLoading.hide();});
+                return false;
+            });
+            $('form.jie-tuan').formOnAjax(function(ret){
+                modalLoading.msg('操作成功',1500,function(){
+                    location.reload();
+                });
+            });
+
+            $('form.submit-join-data').on('submit',function(){
+                var frm = $(this);
+                if(frm.valid()){
+                    $.post(frm.attr('action'),frm.serializeArray(),function(ret){
+                        if(ret['code'] == 0){
+                            $('#btn-tuan-join').html('已参团').attr('class','btn btn-tuan-success btn-success').attr('data-joined','yes');
+                            modalLoading.hide();
+                            $('#join-group').modal('hide');
+                            $('#join-group-success').modal('show');
+                            $('#pay_url').attr('href',$('#pay_url').attr('data-pay-url') + ret['data']['bill_sn']);
+                        }else{
+                            modalLoading.msg(ret['message']);
+                        }
+                    },'json').error(function(){modalLoading.hide();});
+                }
+                return false;
+            });
+            $('#pay_url').on('click',function(){
+                setTimeout(function(){location.reload();},100);
+            });
+
+        });
+    </script>
+{% endblock %}

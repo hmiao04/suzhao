@@ -1,0 +1,65 @@
+{% extends 'layout.twig' %}
+{% block title %}我参加的团购{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-title ">
+            <h3 class="pull-left">我参加的团购</h3>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="data-table-wrapper">
+                <table class="table m-b-none table-bordered">
+                    <thead>
+                    <tr>
+                        <th>图片</th>
+                        <th>团购信息</th>
+                        <th width="200">参团信息</th>
+                        <th width="80">团购状态</th>
+                        <th width="80">支付状态</th>
+                        <th width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in gbList %}
+                        <tr>
+                            <td><img style="width: 80px;height:80px;" src="{{ res_url }}{{ a.main_image }}?resize/h=100" alt=""></td>
+                            <td style="vertical-align: middle;">
+                                {% if a.status > 1 %}
+                                <a href="../tuan/detail.html?id={{ a.id }}" target="_blank">{{ a.title }}</a>
+                                {% else %}{{ a.title }}{% endif %}
+                                <br>
+                                <span>发起人:{{ a.member_name }}</span><br>
+                                <span>发起时间:{{ a.create_time|date('Y-m-d H:i') }}</span>
+                            </td>
+                            <td>
+                                <span>参团价格:{{ a.buy_price }}</span><br>
+                                <span>购买数量:{{ a.buy_count }}</span><br>
+                                <span>参团时间:{{ a.create_time|date('Y-m-d H:i') }}</span>
+                            </td>
+                            <td><span class="label {{ a.group_status == 3 ?'bg-success':'bg-info' }}">
+                        {{ a.group_status == 1 ?'进行中':(a.group_status == 2?'已被接':(a.group_status == 4?'尚未发起':'已完结')) }}</span></td>
+                            <td><span class="label {{ a.pay_status == 1 ?'bg-success':'bg-info' }}">
+                        {{ a.pay_status == 1 ?'已':'未' }}支付</span></td>
+                            <td>
+                                {% if a.group_status == 1 %}{#发起中...#}
+                                    <a href="../tuan/pay_manner?gb_id={{ a.id }}">支付方式<br></a>
+                                    <a href="cancel?id={{ a.id }}" class="ajax-post delete-link confirm">取消</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="data-table-paginate">
+                    <div class="col-xs-6">
+                        <div class="data-table-info">总计 {{ totalPage }} 页  共 {{ totalCount }} 条记录</div>
+                    </div>
+                    <div class="col-xs-6">
+                        {{ pageString|raw }}
+                    </div>
+                    <br class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

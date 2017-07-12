@@ -1,0 +1,279 @@
+{% extends 'admin.twig' %}
+{% block title %}广告列表 - 广告管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                说明:排序的数值越高，排序越靠前！
+                <a href="##" class="pull-right" data-toggle="modal" data-target="#saveAds">新增广告</a>
+                <br class="clear">
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th>广告ID</th>
+                        <th>广告名称</th>
+                        <th>广告排序</th>
+                        <th>所属分类</th>
+                        <th>点击单价</th>
+                        <th>待付金额</th>
+                        <th>是否展示</th>
+                        <th>访问日志保存天数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in adsList %}
+                        <tr>
+                            <td>{{ a.AdsId }}</td>
+                            <td>{{ a.AdsName }}</td>
+                            <td>{{ a.SortScore }}</td>
+                            <td>{{ a.CategoryName }}</td>
+                            <td>{{ a.ClickPrice }}</td>
+                            <td>{{ a.ClickPrice*a.PayMoneyCount }}</td>
+                            <td><span class="label {{ a.State == 1?'bg-success':'bg-warning' }}" title="Disabled">{{ a.State == 1?'显示':'隐藏' }}</span></td>
+                            <td>{{ a.LogSaveDays }}</td>
+                            <td>
+                                <a href="##" data-mode="edit" data-toggle="modal" data-target="#saveAds" data-ads-id="{{ a.AdsId }}">修改</a>
+                                <a href="view.ads-log-list?adsId={{ a.AdsId }}">查看日志</a>
+                                <a href="api/ads.paid?adsId={{ a.AdsId }}"
+                                   data-confirm-message="结算数据如下\r\n结算商家:{{ a.AdsName }}\r\n单价:{{ a.ClickPrice }}\r\n点击次数:{{ a.PayMoneyCount }}\r\n结算总金额:{{ a.ClickPrice*a.PayMoneyCount }}元\r\n注意结算后相关数据将不可恢复,请谨慎确认是否结算?"
+                                   class="ajax-post confirm success-message">结算</a>
+                                <a href="api/ads.delete?adsId={{ a.AdsId }}" class="ajax-post confirm">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="saveAds" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate frm-saveAds" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h3 class="modal-title">数据</h3>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <input type="hidden" v-model="ads.AdsId" name="AdsId">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>广告名称</label>
+                                    <input type="text" class="form-control required" v-model="ads.AdsName"
+                                           data-message-required="请填写广告名称"  name="AdsName" maxlength="50"
+                                           placeholder="最多允许填写50个字">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>商家名字</label>
+                                    <input type="text" class="form-control required" v-model="ads.BusinessName"
+                                           data-message-required="请填写商家名字" name="BusinessName" maxlength="50"
+                                            placeholder="最多允许填写50个字">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>广告分类</label>
+                                    <select v-model="ads.AdsCategory" name="AdsCategory" class="form-control required">
+                                        {% for c in cateList %}
+                                        <option value="{{ c.CategoryId }}">{{ c.CategoryName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>商家属性</label>
+                                    <input type="text" class="form-control required" v-model="ads.BusinessAttr"
+                                           data-message-required="请填写商家属性" name="BusinessAttr">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>点击单价</label>
+                                    <div class="input-group" style="position: static;">
+                                        <input type="text" class="form-control required ads-sort" name="ClickPrice"
+                                               data-message-required="请填写点击单价" v-model="ads.ClickPrice" value="0">
+                                        <span class="input-group-addon">元(￥)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>商家地址</label>
+                                    <input type="text" class="form-control required" v-model="ads.BusinessAddr"
+                                           data-message-required="请填写商家地址" name="BusinessAddr">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>	广告排序</label>
+                                    <input type="text" class="form-control required ads-sort" v-model="ads.SortScore" name="SortScore"
+                                           data-message-required="请填写广告排序" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label>访问日志保存天数</label>
+                                    <div class="input-group" style="position: static;">
+                                        <input type="text" class="form-control required" value="30" v-model="ads.LogSaveDays"
+                                               name="LogSaveDays" placeholder="商家的访问记录保存的最大天数"
+                                               data-message-required="请填写访问日志保存天数">
+                                        <span class="input-group-addon">天</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>是否显示</label>
+                                    <select v-model="ads.State" class="form-control" name="State">
+                                        <option value="1">显示</option>
+                                        <option value="0">隐藏</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>访问地址</label>
+                                    <input class="form-control required" placeholder="点击商家后跳转的网址,请按照http://格式开头"
+                                              v-model="ads.BusinessUrl" name="BusinessUrl" data-message-required="请填写访问地址">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>广告描述</label>
+                                    <textarea class="form-control" rows="3" placeholder="请输入对商家的描述"
+                                              v-model="ads.AdsDesc" name="AdsDesc" style="resize: none;"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label style="float: left;">广告图片</label>
+                                    <span id="the-image-up-w"style="display: inline-block;position: relative;width: 150px;float: left;"></span>
+                                    <br class="clear">
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <div class="fileinput-new thumbnail" style="width: 200px;min-height: 100px;" data-trigger="fileinput">
+                                            <img class="preview-img" v-bind:src="ads.AdsImage" />
+                                        </div>
+                                        <div>
+                                                <span class="btn btn-default btn-file">
+                                                    <span class="fileinput-new">选择图片</span>
+                                                    <span class="fileinput-exists">更改</span>
+                                                    <input type="file" data-icon="false"
+                                                           data-message-required="请选择广告图片"
+                                                           error-label-wrapper="#the-image-up-w" name="AdsPic" accept="image/*">
+                                                </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-default" v-on:click="saveAds">
+                                <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        $(function(){
+            $.extend($.validator.messages, {
+                required: "此项内容必须填写"
+            });
+
+            var commonData = {
+                initAds:{
+                    "AdsId": 0,
+                    "AdsName": "",
+                    "BusinessName": "",
+                    "BusinessAttr": "",
+                    "BusinessAddr": "",
+                    "BusinessUrl": "",
+                    "AdsCategory": "1",
+                    "AdsImage": '',
+                    "AdsDesc": '',
+                    "ClickPrice": "0",
+                    "SortScore": "0",
+                    "State": "1",
+                    "LogSaveDays": "30"
+                },
+                ads:{}
+            };
+            var adsSaveApp = new Vue({
+                el:'#saveAds',
+                data:commonData,
+                methods:{
+                    saveAds:function(){
+                        var frm = $('.frm-saveAds');
+                        if(frm.valid()){
+                            var formData = new FormData(frm[0]);
+                            $.ajax({
+                                url : '../api/ads.save',
+                                type : 'POST',
+                                data : formData,
+                                dataType:'json',
+                                processData : false,
+                                contentType : false,
+                                success : function(ret) {
+                                    if(ret['code'] == 0){
+                                        location.reload();
+                                    }else{
+                                        alert(ret['message']);
+                                    }
+                                },
+                                error : function(responseStr) {
+                                    alert("失败:" + responseStr);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            $('#saveAds').on('show.bs.modal',function(e){
+                var modal = $(this);
+                var link = $(e.relatedTarget),mode = link.attr('data-mode');
+                modal.find('label.error').html('');
+                modal.find('[type=file]').removeClass('required');
+                if(mode == 'edit'){
+                    modal.find('.modal-title').html('修改广告数据')
+                    $.get('../api/ads.detail',{'adsId':link.attr('data-ads-id')},function(ret){
+                        if(ret['code'] == 0){
+                            commonData.ads = ret['data'];
+                        }else{
+                            alert(ret['message']);
+                        }
+                    },'json');
+                }else{
+                    modal.find('form').get(0).reset();
+                    commonData.ads = commonData.initAds;
+                    modal.find('.modal-title').html('新增广告')
+                    modal.find('[type=file]').addClass('required');
+                }
+            });
+
+            $('a.ajax-post').on('click',function(){
+                var me = $(this),url = me.attr('href');
+                if(!url||url.substr(0,1) == '#') return false;
+                var confirmMessage = me.attr('data-confirm-message') ? me.attr('data-confirm-message'):'删除数据后将无法恢复,请确认是否继续?';
+                confirmMessage = confirmMessage.replace(new RegExp(/\\r\\n/g),"\n");
+                if(me.hasClass('confirm') && !confirm(confirmMessage)){
+                    return false;
+                }
+                $.get(url,function(ret){
+                    if(ret['code'] == 0) {
+                        me.has('success-message') && alert('操作成功!')
+                        location.reload();
+                    }
+                    else alert(ret['message']);
+                },'json').error(function(){
+                    alert('数据请求失败！');
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

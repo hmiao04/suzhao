@@ -1,0 +1,28 @@
+{% extends '../page.layout.twig' %}
+{% block title %}团购列表{% endblock %}
+{% block block_class_name %}data-list-page{% endblock %}
+{% block app_content %}
+    <div class="container" style="margin-top: 30px;">
+        <div class="panel data-list-wrapper">
+            <div class="panel-body data-list-container">
+                <div class="row">
+                    {% for item in dataList %}
+                        <div class="col-item-5">
+                            <a href="detail.html?id={{ item.id }}" class="list-img" target="t_g_{{ item.id }}">
+                                <div class="img"><img src="{{ res_url }}{{ item.main_image }}" alt="{{ item.title }}"></div>
+                            </a>
+                            <div>
+                                <a href="detail.html?id={{ item.id }}" class="list-title" target="t_g_{{ item.id }}">
+                                    <p class="item-title">{{ item.title }}</p>
+                                    <p class="goods-name">{{ item.goods_name }}</p>
+                                    <span class="goods-price hidden">{{ item.goods_price }}</span>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% include '../layout.page.twig' %}
+        </div>
+    </div>
+{% endblock %}

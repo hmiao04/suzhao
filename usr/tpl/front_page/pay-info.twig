@@ -1,0 +1,54 @@
+{% extends 'page.layout.twig' %}
+{% block title %}支付{% endblock %}
+{% block app_content %}
+    <div class="pay-info-wrapper">
+        <h3 class="p-pay-pt">待支付账单</h3>
+        <div class="bill-info">
+            <h4 class="info-item">{{ bill_info.bill_title }}</h4>
+            <div class="info-item">
+                <span>应付金额：</span><span class="pay-money">{{ bill_info.pay_money }}</span><span>元</span>
+            </div>
+        </div>
+        <div class="pay-ways">
+            <div class="pay-way-title-w"><span>支付方式：</span></div>
+            <div class="selects">
+                <a href="javascript:void(0);" class="pay-way-item pay-way-alipay selected" data-pay-way="alipay"></a>
+            </div>
+        </div>
+        <div class="text-left">
+            <a href="{{ pay_url }}" class="btn btn-danger btn-pay" target="_blank">立即支付</a>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="pay-status-progress" class="modal" modal-window="" animate="animate" data-backdrop="static">
+            <div class="modal-dialog modal-sm" style="margin-top: 20%;width:500px;">
+                <div class="modal-content" modal-transclude="">
+                    <div class="modal-header">
+                        <h3 class="modal-title">支付提示</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4>支付未完成前，请不要关闭此窗口。</h4>
+                        <h4>支付完成后，请根据您的支付情况点击下面的按钮。</h4>
+                        <div class="text-center" style="margin-top:30px;margin-botton:10px;">
+                            <button type="button" class="btn btn-info" data-dismiss="modal">出现了问题</button>
+                            <a type="button" class="btn btn-success" id="pay-success-check">已完成支付</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script type="text/javascript">
+        $(function(){
+            var pay_sn = '{{ bill_info.pay_way_sn }}',bill__sn='{{ bill_info.bill_sn }}';
+            $('.btn-pay').on('click',function(){
+                $('#pay-status-progress').modal('show');
+            });
+            var extra_common_param = {bill_sn:bill__sn};
+            var checkUrl = 'return.html?trade_no=' + bill__sn + '&out_trade_no=' + pay_sn + '&extra_common_param=' + encodeURIComponent(JSON.stringify(extra_common_param));
+            $('#pay-success-check').attr('href',checkUrl);
+        });
+    </script>
+{% endblock %}

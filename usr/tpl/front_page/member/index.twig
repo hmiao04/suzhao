@@ -1,0 +1,155 @@
+{% extends 'layout.twig' %}
+{% block title %}会员中心{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">个人资料</h2>
+            </div>
+            <div class="panel-body">
+                <form action="member.update" class="form-horizontal ajax-form validate" method="post">
+                    <input type="hidden" name="form_hash" value="{{ FROM_HASH }}">
+
+                    <div class="pull-left user-avatar" style="width:200px;">
+                        <div style="width: 100px;margin: auto;position: relative;">
+                            <img style="width: 100px;height: 100px;" id="user-avatar-img"
+                                 src="{{ res_url }}{{ MEMBER_INFO.avatar }}_avatar150.webp.jpg?resize/w=100" class="img-circle" alt="">
+                            <div class="process-upload">
+                                <div class="bg"></div>
+                                <div class="content"></div>
+                            </div>
+                            <input id="avatar_upload" name="avatar_upload" style="visibility: hidden"
+                                   type="file" multiple="false">
+                        </div>
+                        <div class="notice-text">图片格式为jpg、png<br>尺寸不能超过480*480</div>
+                    </div>
+                    <div class="pull-left form-inline">
+                        <div class="row">
+                            <label>昵称:</label>
+                            <input type="text" class="form-control required" value="{{ MEMBER_INFO.name }}" name="name"
+                                   data-message-required="请填写昵称" placeholder="请填写昵称">
+                            <label id="name-error" class="error input-notice" for="name"></label>
+                        </div>
+                        <div class="row">
+                            <label>手机号码:</label>
+                            <input type="text" class="form-control" value="{{ MEMBER_INFO.phone }}" name="phone">
+                        </div>
+                        <div class="row">
+                            <label>性别:</label>
+                            <select name="gender" class="form-control">
+                                <option value="1">女</option>
+                                <option value="0" {{ MEMBER_INFO.gender == 0 ?'selected="selected"':'' }}>男</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label>出生日期:</label>
+                            <input type="text" class="form-control laydate-icon" readonly="readonly" name="birth_date" value="{{ MEMBER_INFO.birth_date }}"
+                                onfocus="laydate()">
+                        </div>
+                        <div class="row">
+                            <label>Email:</label>
+                            <input type="text" class="form-control required email" name="email" value="{{ MEMBER_INFO.email }}"
+                                   data-message-required="请填写正确邮箱确保能够接收信息" placeholder="请填写正确邮箱确保能够接收信息"
+                                   data-message-email="邮箱格式不正确">
+                            <label for="email" class="input-notice error color-gray" id="email-error"></label>
+                        </div>
+                        <div class="row">
+                            <label></label>
+                            <button class="btn btn-primary pull-left" style="margin-left: 10px;width: 100px;"
+                                    type="submit">保存
+                            </button>
+                            <label class="ajax-result-wrapper"></label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">修改密码</h2>
+            </div>
+            <div class="panel-body form-inline">
+                <form action="member.password" class="form-horizontal ajax-form reset validate" method="post">
+                    <input type="hidden" name="form_hash" value="{{ FROM_HASH }}">
+                    <div class="row">
+                        <label>旧密码:</label>
+                        <input type="password" class="form-control required" data-message-required="请输入原始密码"
+                               name="login_pwd">
+                        <label id="login_pwd-error" class="error input-notice color-gray" for="login_pwd"></label>
+                    </div>
+                    <div class="row">
+                        <label>新密码:</label>
+                        <input type="password" class="form-control required" name="new_pwd"
+                               data-message-required="请输入新密码" data-message-focus="密码长度6~32位,字母或者数字">
+                        <label id="new_pwd-error" class="error input-notice color-gray"
+                               for="new_pwd">密码长度6~32位,字母或者数字</label>
+                    </div>
+                    <div class="row">
+                        <label>确认密码:</label>
+                        <input type="password" class="form-control required" name="new_pwd_1"
+                               data-message-required="再次输入新密码">
+                        <label id="new_pwd_1-error" class="error input-notice color-gray" for="new_pwd_1"></label>
+                    </div>
+                    <div class="row">
+                        <label> </label>
+                        <button class="btn btn-primary pull-left" style="margin-left: 10px;width: 100px;"
+                                type="submit">保存
+                        </button>
+                        <label class="ajax-result-wrapper"></label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/js/laydate/laydate.js"></script>
+    <script src="{{ SITE_URL }}/assets/ycs/plugins/jquery.uploadify.js"></script>
+    <script>
+        $(function(){
+
+            $('#avatar_upload').uploadify({
+                formData: {
+                    '{{ ses_key }}':'{{ ses_id }}',
+                    'timestamp' : '{{ timestamp }}',
+                    'token'     : '{{ token }}'
+                },
+                fileTypeDesc: '图片文件',
+                fileTypeExts: '*.jpg; *.png',
+                buttonText: '上传头像',
+                width: 100,
+                height: 30,
+                multi: false,
+                swf: '{{ SITE_URL }}/assets/ycs/plugins/uploadify.swf',
+                uploader: '{{ SITE_URL }}/member/avatar.upload',
+                onUploadStart: function (file) {
+                    $('.process-upload').show();
+                },
+                onUploadSuccess: function (file, response, res) {
+                    $('.process-upload').hide();
+                    response = ycj.parseJSON(response);
+                    if (response) {
+                        if (response['code'] != 0) {
+                            modalLoading.msg(response['message']);
+                            return false;
+                        }
+                        $('#user-avatar-img').attr('src', response['data'] + '_avatar150.webp.jpg?resize/w=100');
+                        return;
+                    }
+                    modalLoading.msg('头像上传异常');
+                }
+            });
+            $('form.ajax-form').formOnAjax(function(ret){
+                var frm = $(this);
+                modalLoading.msg('资料更新成功',1000,function(){
+                    //location.reload();
+                    if(frm.hasClass('reset')){
+                        frm.get(0).reset();
+                    }
+                });
+            });
+        })
+
+    </script>
+
+{% endblock %}

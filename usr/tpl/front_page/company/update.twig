@@ -1,0 +1,159 @@
+{% extends '../member/layout.twig' %}
+{% block title %}商家入驻资料{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-item">
+            {% if showFee %}
+            <div class="panel-body" style="padding: 20px 0;">
+                <div class="text-center">
+                    <h2 class="">入驻申请已通过</h2>
+                    <a href="pay.html" target="_blank" class="btn btn-primary"
+                                         style="width: 200px">请先支付测试确保收付正常</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="panel-title">
+                <h2 class="pull-left">商家入驻资料</h2>
+                <a href="{{ SITE_URL }}/member/identification.html" class="pull-right">认证资料</a>
+            </div>
+            <div class="panel-body">
+                {% if status == 1 %}
+                    <div class="alert alert-success" role="alert">
+                        <strong>入驻成功!</strong>您可以重新修改入驻资料.
+                    </div>
+                {% elseif status == 2 %}
+                    <div class="alert alert-warning" role="alert">
+                        <strong>入驻资料审核中...</strong>
+                    </div>
+                {% endif %}
+                <form action="update.html" class="form-horizontal ajax-form validate {{ status == 2 ? 'disabled':'' }}" method="post">
+                    <input type="hidden" name="form_hash" value="{{ FROM_HASH }}">
+                    <div class="pull-left normal-image-upload" style="width:300px;">
+                        <div style="width: 300px;margin: auto;position: relative;">
+                            <img style="width: 300px;height: 200px;" id="user-avatar-img"
+                                 src="{{ res_url }}{{ company.company_image }}_cw300.webp" alt="">
+                            <div class="error-notice" style="height: 20px;">
+                                <label id="company_image-error" class="error" for="company_image"
+                                       style="position: relative;padding: 0;left: -10px;top: 5px;"></label>
+                            </div>
+                            <div class="process-upload">
+                                <div class="bg"></div>
+                                <div class="content"></div>
+                            </div>
+                            <input id="avatar_upload" style="visibility: hidden" type="file" multiple="false">
+                            <input type="hidden" id="company_image" value="{{ company.company_image }}"
+                                   class="required" data-message-required="请设置商家展示图片"
+                                   name="company_image">
+                        </div>
+                    </div>
+                    <div class="pull-left form-inline company-update">
+                        <div class="row">
+                            <label>商家类型:</label>
+                            <select name="company_type" class="form-control required" data-message-required="请选择商家类型">
+                                <option value="">请选择商家类型</option>
+                                {% for tid,tname in companyTypes %}
+                                <option value="{{ tid }}"{{ tid == company.company_type?' selected="selected"':'' }}>{{ tname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label>商家名称:</label>
+                            <input type="text" class="form-control required" value="{{ company.company_name }}" name="company_name"
+                                   data-message-required="请填写商家名称" placeholder="请填写商家名称">
+                        </div>
+                        <div class="row">
+                            <label>联系电话:</label>
+                            <input type="text" class="form-control required" value="{{ company.company_phone }}" name="company_phone"
+                                   data-message-required="请填写联系电话" placeholder="请填写联系电话">
+                        </div>
+                        <div class="row">
+                            <label>联系传真:</label>
+                            <input type="text" class="form-control" value="{{ company.company_fax }}" name="company_fax"
+                                   data-message-required="请填写联系传真" placeholder="请填写联系传真">
+                        </div>
+                        <div class="row">
+                            <label>联系QQ:</label>
+                            <input type="text" class="form-control" value="{{ company.company_qq }}" name="company_qq"
+                                   data-message-required="请填写联系QQ" placeholder="请填写联系QQ">
+                        </div>
+                        <div class="row">
+                            <label>联系地址:</label>
+                            <input type="text" class="form-control required" value="{{ company.company_address }}" name="company_address"
+                                   data-message-required="请填写联系地址" placeholder="请填写联系地址">
+                        </div>
+                        <div class="row">
+                            <label>经营范围简介:</label>
+                            <textarea class="form-control required" name="company_desc" placeholder="请填写公司经营范围"
+                                   data-message-required="请填写公司经营范围" style="height: 150px;">{{ company.company_desc }}</textarea>
+                        </div>
+                        <div class="row">
+                            <label></label>
+                            {% if  status == 2 %}
+                                <button class="btn btn-default pull-left" disabled="disabled"
+                                        style="margin-left: 10px;width: 150px;" type="button">入驻资料审核中...</button>
+                            {% else %}
+                                <button class="btn btn-primary pull-left" style="margin-left: 10px;width: 100px;"
+                                        type="submit">
+                                    {{ status == 1?'更新资料':'申请入驻' }}
+                                </button>
+                            {% endif %}
+                            <label class="ajax-result-wrapper"></label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/ycs/plugins/jquery.uploadify.js"></script>
+    <script>
+        $(function(){
+            var res_url = '{{ res_url }}';
+            $('.disabled').find(':input').each(function(){
+                $(this).attr('readonly','readonly').attr('disabled','disabled');
+            });
+            $('form.ajax-form').formOnAjax(function(ret){
+                var frm = $(this);
+                modalLoading.msg('资料更新成功',1000,function(){
+                    location.reload();
+                });
+            });
+            if($('form.disabled').length == 1) return;
+            $('#avatar_upload').uploadify({
+                formData: {
+                    'timestamp' : '{{ timestamp }}',
+                    'token'     : '{{ token }}'
+                },
+                fileTypeDesc: '图片文件',
+                fileTypeExts: '*.jpg; *.png',
+                buttonText: '设置商家展示图片',
+                width: 300,
+                height: 30,
+                multi: false,
+                swf: '{{ SITE_URL }}/assets/ycs/plugins/uploadify.swf',
+                uploader: '{{ SITE_URL }}/file/upload',
+                onUploadStart: function (file) {
+                    $('.process-upload').show();
+                },
+                onUploadSuccess: function (file, response, res) {
+                    $('.process-upload').hide();
+                    response = ycj.parseJSON(response);
+                    if (response) {
+                        if (response['code'] != 0) {
+                            modalLoading.msg(response['message'],1000);
+                            return false;
+                        }
+                        $('#user-avatar-img').attr('src', res_url + response['data'] + '_cw300.webp?resize/w=300');
+                        $('#company_image').val(response['data']);
+                        return;
+                    }
+                    modalLoading.msg('设置公司图片异常');
+                }
+            });
+        })
+
+    </script>
+
+{% endblock %}

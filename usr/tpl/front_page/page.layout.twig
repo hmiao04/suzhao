@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}速找网{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.2, maximum-scale=1"/>
+    <link rel="stylesheet" href="//g.alicdn.com/cm/xsell/4.1.0/??iconfont/index.css">
+    <link href="{{ SITE_URL }}/assets/style/css/baseN.css" rel="stylesheet"/>
+    <link href="{{ SITE_URL }}/assets/style/css/base.css" rel="stylesheet"/>
+
+    <link href="{{ cdn }}/assets/style/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ SITE_URL }}/assets/style/css/sz.css" rel="stylesheet"/>
+    <script type="text/javascript" src="{{ SITE_URL }}/assets/js/login.js"></script>
+    <script src="{{ cdn }}/assets/style/js/jquery.js"></script>
+    <script type="text/javascript" src="{{ SITE_URL }}/assets/ycs/common.js"></script>
+    <script src="{{ cdn }}/assets/style/js/bootstrap.js"></script>
+    <script src="{{ cdn }}/assets/style/js/jquery.validate.js"></script>
+    <script src="{{ SITE_URL }}/assets/style/js/sz.js"></script>
+    <script>var base_url = '{{ SITE_URL }}';</script>
+    {% block head_end %}{% endblock %}
+    <style type="text/css" >
+
+    	html{
+    		font-size: 12px;
+    	}
+    </style>
+</head>
+<body class="{% block block_class_name %}{% endblock %}">
+<header>
+        <div class="head_tag"><!--        首页顶部信息栏-->
+            <div style="width: 100rem;margin: 0 auto"> 
+                <div class="tag_left" > 欢迎来到速找网  &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="tag_right">
+                    <ul>
+                        {% if MEMBER_INFO.id > 0 %}
+                            <li>
+                                <a href="{{ SITE_URL }}/member/">
+                                    <img class="avatar" src="{{ res_url }}{{ MEMBER_INFO.avatar }}_avatar150.webp.jpg?resize/w=100"
+                                         style="width: 20px;border-radius: 50%;">
+                                    用户中心
+                                    {#{{ MEMBER_INFO.name }}#}
+                                </a>
+                            </li>
+                            <li><a href="{{ SITE_URL }}/account/user.logout" title="退出登录">退出</a></li>
+                        {% else %}
+                            <li><a href="{{ SITE_URL }}/account/#reg" title="注册帐号" target="_blank">免费注册</a></li>
+                            <li><a title="登录" href="{{ SITE_URL }}/account/" target="_blank">登录</a></li>
+                        {% endif %}
+                        <li><img style="width: 16px;height:20px;margin-right: .5rem" src="{{ SITE_URL }}/assets/images/tmp/purchase.png" align="absmiddle">&nbsp;<a href="#">购物车 件</a></li>
+                        <li><a href="#">我的订单</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="login"><!--登录区域展示栏-->
+            <div class="login_content">
+                <form id="login_form" action="{{ SITE_URL }}/api/v1/gateway.do?method=member.login" method="post">
+                <div class="login_content_left">
+                    <input type="text"  name="user_id" data-regex="^1[34578]([0-9]{9})$" placeholder="请输入邮箱/手机号码" id="send_sms_phone">
+                    <input type="text" name="password" placeholder="请输入密码">
+                    <input class="hide" type="text" name="veritfy_code" placeholder="请输入验证码" style="width: 10%">
+                    <button data-url="{{ SITE_URL }}/api/v1/gateway.do?method=common.sendsms" type="button"
+                            class="hide btn btn-default btn-send-sms" style="border:none;border-radius:4px;color: #fff;background-color: transparent">发送验证码</button>
+                </div>
+                <div class="login_content_right">
+                    <input type="button" class="reg_btn0 reg_btn" name="register" value="免费注册">
+                    <input type="submit" class="reg_btn1 reg_btn" name="reg" value="注册">
+                    <input type="submit" class="log_btn" name="login" value="登陆"  >
+                </div>
+                </form>
+            </div>
+        </div>
+        <div class="item"><!--搜索栏以及平台logo-->
+            <div class="item_left"><img src="{{ SITE_URL }}/assets/images/tmp/logo.png"></div>
+            <div class="item_mid">
+                {#<form target="_top" action="/search" name="search">#}
+                <input type="text" class="key_words" name="key_words" placeholder="搜索材料、款式、工厂">
+                <input type="button" class="search" name="search"  value="搜 索">
+                {#</form>#}
+            </div>
+            <div class="item_right">
+                <input type="button"  value="工厂入驻">
+                <input type="button"  value="实地认证">
+            </div>
+        </div>
+    </header>
+    <div class="app-content-wrapper">
+        <div class="app-content">
+            {% block app_content %}{% endblock %}
+        </div>
+    </div>
+    <footer>
+        <div class="footer_container">
+            <div class="footer_top" style="width: 51rem"><!--底部导航栏-->
+                <ul>
+                    <li><a href="{{ SITE_URL }}/page/view.html?id=about-us">关于我们</a></li>
+                    <li><a href="#">免费注册</a></li>
+                    <li><a href="{{ SITE_URL }}/company/update.html">商家入驻</a></li>
+                    <li><a href="javascript:void(0);">实地认证</a></li>
+                    <li><a href="{{ SITE_URL }}/task/">速找任务</a></li>
+                    <li><a href="javascript:void(0);">找材料</a></li>
+<!--                    <li><a href="{{ SITE_URL }}/company/">找厂家</a></li>  -->
+                    <li><a href="{{ SITE_URL }}/tuan/">团购</a></li>
+                    <li><a href="{{ SITE_URL }}/picture/">图片分享</a></li>
+                </ul>
+            </div>
+            <div class="footer_mid" style="width: 44rem"><!--底部联系方式-->
+                <ul>
+                    <li>Email:guoawedu@126.com</li>
+                    <li>工作时间: 08:00-22:00 </li>
+                    <li>24小时咨询热线&nbsp;:&nbsp;0351-7589628</li>
+                </ul>
+            </div>
+            <div class="footer_buttom"><!--冠字以及版权专栏-->
+                <p style="text-align: center">Copyright © 2017 www.tsuzhao.com 蜀ICP备15020297号-2 技术支持：XXPC</p>
+            </div>
+        </div>
+
+    </footer>
+
+    <!--发起猜拍-->
+    <div class="popup" id="popup">
+        <div class="top_nav" id='top_nav'>
+            <div align="center">
+                <span style=" font-size: 16px;line-height: 4rem;color: #00a0e9">我要发起团购</span>
+                <a class="guanbi"></a>
+            </div>
+        </div>
+
+        <div class="min" style="background-color: #e6e6e6">
+            <form class="form-inline" method="post" target="publish_tuan" action="{{ SITE_URL }}/tuan/new.html?src=index">
+                <table style="width: 100%">
+                    <tr>
+                        <th>团购商品</th>
+                        <th>期望团购价格</th>
+                    </tr>
+                    <tr>
+                        <td><input class="form-control required" type="text" name="title" placeholder="团购商品标题"></td>
+                        <td><input class="form-control required" type="text" name="tuan_price" placeholder="期望团购价格"></td>
+                    </tr>
+                    <tr>
+                        <th>团购数量</th>
+                        <th>期望交货时间</th>
+                    </tr>
+                    <tr>
+                        <td><input class="form-control required" name="buy_count" type="text" placeholder="团购数量"></td>
+                        <td><input class="form-control required" type="text" placeholder="期望交货时间"
+                                   onclick="laydate({ min: laydate.now()})" name="end_time"></td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">团购要求</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><textarea name="require" style="margin-left: 1.6rem;height: 4rem;width: 92%;padding-left: .5rem;" placeholder="团购要求"></textarea></td>
+                    </tr>
+
+                </table>
+
+                <div  style="margin-top: 7px;width: 100%;height: 2.5rem;padding-bottom: 3rem">
+                    <a style="font-size: 16px;line-height: 4rem;margin-left: 60%" target="publish_tuan"
+                       href="{{ SITE_URL }}/tuan/new.html">自定义>></a>
+                    <button class="need" style="margin-right: 1.5rem">立即发布需求</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% block end_body %}{% endblock %}
+</body>
+</html>
+<script src="{{ cdn }}/assets/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript">
+    $("#register").click(function () {
+        if($("#login:first").is(":hidden")){
+            $("#login").slideDown(300);
+        }else{
+            $("#login").slideUp(500);
+        }
+
+    });
+    $("#rul").mouseover(function () {
+        $(".rules").show();
+    });
+    $("#rul").mouseout(function () {
+        $(".rules").hide();
+    });
+    $(".reg_btn").click(function () {
+        $(".hide").show();
+    });
+    $(".reg_btn0").click(function () {
+        $(".reg_btn1").show();
+        $(".reg_btn0").hide();
+        $("#login_form").attr("action","{{ SITE_URL }}/api/v1/gateway.do?method=member.register")
+    });
+
+
+    $(".search,.item_right>input").click(function () {
+        window.location.href="{{ SITE_URL }}/company/";
+    });
+
+
+
+    //点击登录class为tc 显示
+    $("#fqcp").click(function(){
+        $("#popup").show();//查找ID为popup的DIV show()显示#gray
+        tc_center();
+    });
+    //点击关闭按钮
+    $("a.guanbi").click(function(){
+        $("#popup").hide();//查找ID为popup的DIV hide()隐藏
+    })
+
+    //窗口水平居中
+    $(window).resize(function(){
+        tc_center();
+    });
+
+    function tc_center(){
+        var _top="260rem";
+        var _left=($(window).width()-$(".popup").width())/2;
+
+        $(".popup").css({top:_top,left:_left});
+    }
+
+        $(document).ready(function(){
+            $(".hide").hide();
+            $(".reg_btn1").hide();
+            $(".top_nav").mousedown(function(e){
+                $(this).css("cursor","move");//改变鼠标指针的形状
+                var offset = $(this).offset();//DIV在页面的位置
+                var x = e.pageX - offset.left;//获得鼠标指针离DIV元素左边界的距离
+                var y = e.pageY - offset.top;//获得鼠标指针离DIV元素上边界的距离
+                $(document).bind("mousemove",function(ev){ //绑定鼠标的移动事件，因为光标在DIV元素外面也要有效果，所以要用doucment的事件，而不用DIV元素的事件
+
+                    $(".popup").stop();//加上这个之后
+
+                    var _x = ev.pageX - x;//获得X轴方向移动的值
+                    var _y = ev.pageY - y;//获得Y轴方向移动的值
+
+                    $(".popup").animate({left:_x+"px",top:_y+"px"},10);
+                });
+
+            });
+
+            $(document).mouseup(function() {
+                $(".popup").css("cursor","default");
+                $(this).unbind("mousemove");
+            });
+        })
+</script>

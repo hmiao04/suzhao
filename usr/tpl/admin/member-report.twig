@@ -1,0 +1,11 @@
+{% extends 'admin.twig' %}
+{% block title %}会员报告 - 会员查询 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="data-table-wrapper ajax-data-wrapper">
+                {% include 'member-report-item.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

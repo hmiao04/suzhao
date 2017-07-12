@@ -1,0 +1,110 @@
+{% extends 'admin.twig' %}
+{% block title %}广告管理{% endblock %}
+{% block AppContent %}
+    <div class="app-content-full">
+        <div class="hbox hbox-auto-xs bg-light">
+            <!-- column -->
+            <div class="col w lter b-r">
+                <div class="vbox" id="ads-category">
+                    <div class="row-row">
+                        <div class="cell scrollable hover">
+                            <div class="cell-inner">
+                                <div class="list-group list-group-lg no-radius no-border no-bg m-b-none">
+                                    <a class="list-group-item m-l" v-for="cate in cateList" v-on:click="select($event,$index)">
+                                        <span class="block text-ellipsis m-l-n text-md">{{ '{{ cate.CategoryName }}' }}</span>
+                                    </a>
+                                </div>
+                                <div class="m-t-n-xxs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wrapper b-t text-center">
+                        <a href="#" class="btn btn-sm btn-default btn-addon" v-on:click="createGroup">
+                            <i class="glyphicon glyphicon-plus m-r-xs"></i> 新建分类</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /column -->
+
+            <!-- column -->
+            <div class="col">
+                <div class="vbox" id="edit-category">
+                    <div class="row-row">
+                        <div class="cell">
+                            <div class="cell-inner">
+                                <div class="wrapper-md">
+                                    <div class="form-horizontal">
+                                        <div class="form-group m-b-sm">
+                                            <label class="col-sm-3 control-label">分类名称</label>
+                                            <div class="col-sm-9">
+                                                <p class="form-control-static" v-show="!item.editing">{{ '{{ item.CategoryName }}' }}</p>
+                                                <input type="text" class="form-control" v-show="item.editing" v-model="item.CategoryName">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wrapper b-t text-right">
+                        <a href="#" class="btn btn-sm btn-default btn-addon" v-on:click="saveGroup">
+                            <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i> 保存数据</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /column -->
+        </div>
+    </div>
+{% endblock %}
+
+{% block last_script %}
+    <script>
+        var cateData = {
+            cateList: []
+        },categoryItem = {
+            item:{
+                editing:false,
+                CateName:'A'
+            }
+        };
+        var cateApp = new Vue({
+            el: '#ads-category',
+            data: cateData,
+            methods:{
+                select:function(e,i){
+                    var _ = $(e.target);
+                    if(_.is('span')) _ = _.parent();
+                    if(!_.hasClass('select')){
+                        _.parent().find('.list-group-item').removeClass('select').removeClass('m-l-none')
+                                .find('span').removeClass('m-l-none');
+                        _.addClass('select m-l-none').find('span').addClass('m-l-none');
+                        categoryItem.item.CateName = cateData.cateList[i]['CateName'];
+                        categoryItem.item.editing = true;
+                    }
+                },
+                createGroup:function(){
+                    cateData.cateList.push({
+                        CateName:'新的分类'
+                    });
+                }
+            }
+        });
+        var editCateApp = new Vue({
+            el:'#edit-category',
+            data:categoryItem,
+            methods:{
+                saveGroup:function(){
+                    categoryItem.item.editing = false;
+                }
+            }
+        });
+        $.get('api/category.list',function(ret){
+            if(ret['code'] == 0){
+                cateData.cateList = ret['data'];
+            }else{
+                alert(ret['message']);
+            }
+        },'json');
+    </script>
+{% endblock %}

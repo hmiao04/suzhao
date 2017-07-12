@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="yan<me@xiaoyan.me>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="no"/>
+    <title>请登录</title>
+    <link href="{{ cdn }}/assets/style/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ cdn }}/assets/ycs/theme.css" rel="stylesheet"/>
+    <script src="{{ cdn }}/assets/style/js/jquery-2.2.0.js"></script>
+    <script src="{{ cdn }}/assets/ycs/common.js"></script>
+    <style type="text/css">
+        body {background-image: url('../static/images/bg1.jpg');background-color: transparent;background-attachment: fixed;background-size: cover;min-height: 500px;}
+        .app:before {background-color: transparent;}
+    </style>
+</head>
+<body>
+<div class="app app-header-fixed app-aside-fixed">
+    <div class="container w-xxl w-auto-xs">
+        <a href="##" class="navbar-brand block m-t ng-binding">后台管理系统</a>
+
+        <div class="m-b-lg">
+            <form action="admin.login" method="post" class="frmLogin">
+                <div class="wrapper text-center">
+                    <strong>使用管理账号来登录吧</strong>
+                </div>
+                <div class="text-danger wrapper text-center ng-binding ng-hide">
+                </div>
+                <div class="list-group list-group-sm">
+                    <div class="list-group-item">
+                        <input type="text" name="loginId" class="form-control no-border" placeholder="Account">
+                    </div>
+                    <div class="list-group-item">
+                        <input type="password" name="loginPwd" class="form-control no-border" placeholder="Password">
+                    </div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">登 录
+                    <span style="width:20px;display:none;"></span></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="text-center copy-right">
+    <div class="bg"></div>
+    <p class="text">
+        <small class="text-muted">YCFramework Management System<br>
+            Copyright XXPC.XYZ © 2014 - {{ RunTimes.datetime.year }}
+        </small>
+    </p>
+</div>
+<script>
+    $(function () {
+        $('form.frmLogin').on('submit', function () {
+            var frm = $(this), url = frm.attr('action'),btn = frm.find('[type=submit]');
+            if(frm.find('[name=loginId]').val().trim() == ''
+                    || frm.find('[name=loginPwd]').val().trim() == ''){
+                alert('请填写登录账号和密码');
+                return false;
+            }
+            var ld = ycs.createLoadingText(function (str) {
+                btn.find('span').text(str);
+            });
+            btn.attr('disabled','disabled').find('span').css('display','inline-block');
+            $.post(url, frm.serializeArray(), function (ret) {
+                ld.stop();
+                btn.removeAttr('disabled').find('span').hide();
+                if (ret['code'] == 0){
+                    if(ycs.pager.get('callback')){
+                        location.href = ycs.pager.get('callback');
+                        return;
+                    }
+                    location.href = '../admin/';
+                }
+                else alert(ret['message']);
+            }, 'json').error(function () {
+                ld.stop();
+                btn.removeAttr('disabled').find('span').hide();
+                alert('数据请求失败！');
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

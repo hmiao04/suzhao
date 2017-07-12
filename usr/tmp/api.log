@@ -1,0 +1,5 @@
+API接口测试数据：
+用户登录:member.login
+login_id=yaclty&login_pwd=123
+实名认证:member.uploadcertification
+type=person&personQQ=123&personName=%E5%BC%A0%E5%85%A8%E8%9B%8B&personGender=%E7%94%B7&personBirthDate=1987-09-12&personPhone=13812120429&IdCard=510122198910142949&personAddress=%E5%9B%9B%E5%B7%9D%E7%9C%81+%E6%88%90%E9%83%BD%E5%B8%82+%E5%8F%8C%E6%B5%81%E5%8E%BF&IdCardAddress=%E5%9B%9B%E5%B7%9D%E7%9C%81+%E6%88%90%E9%83%BD%E5%B8%82+%E5%8F%8C%E6%B5%81%E5%8E%BF&IdCardFrontPhoto=123274648123.jpeg&IdCardBackPhoto=123274648123.jpeg

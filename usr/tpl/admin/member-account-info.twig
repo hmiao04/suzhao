@@ -1,0 +1,24 @@
+<table class="table table-bordered">
+    <tr>
+        <td style="width: 150px">账号/OPENID</td>
+        <td style="width: 200px">创建时间</td>
+        <td>账号类型</td>
+        <td>操作</td>
+    </tr>
+    {% for la in local_account %}
+        <tr>
+            <td>{{ la.login_account }}</td>
+            <td>{{ la.create_time|date('Y-m-d H:i') }}</td>
+            <td>本地</td>
+            <td><a href="../api/member.local_account.reset?aid={{ la.id }}" class="ajax-post confirm">重置密码</a></td>
+        </tr>
+    {% endfor %}
+    {% for pa in partner_account %}
+    <tr>
+        <td>{{ pa.open_id }}</td>
+        <td>{{ pa.create_time|date('Y-m-d H:i') }}</td>
+        <td>{{ pa.provider }}</td>
+        <td><a href="../api/member.partner_account.unbind?aid={{ pa.id }}" class="ajax-post confirm">解除绑定</a></td>
+    </tr>
+    {% endfor %}
+</table>

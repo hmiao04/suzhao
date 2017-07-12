@@ -1,0 +1,65 @@
+<table class="table table-no-border">
+    <tr>
+        <td class="text-right" width="150">认证类型:</td>
+        <td>{{ cert_data.type =='person'?'个人':'企业' }}</td>
+    </tr>
+    <tr><td class="text-right">个人姓名:</td><td>{{ cert_data.certification_data.personName }}</td></tr>
+    <tr><td class="text-right">个人QQ:</td><td>{{ cert_data.certification_data.personQQ }}</td></tr>
+    <tr><td class="text-right">性别:</td><td>{{ cert_data.certification_data.personGender }}</td></tr>
+    <tr><td class="text-right">出生年月:</td><td>{{ cert_data.certification_data.personBirthDate }}</td></tr>
+    <tr><td class="text-right">电话:</td><td>{{ cert_data.certification_data.personPhone }}</td></tr>
+    <tr><td class="text-right">身份证号码:</td><td>{{ cert_data.certification_data.IdCard }}</td></tr>
+    <tr><td class="text-right">居住地址:</td><td>{{ cert_data.certification_data.personAddress }}</td></tr>
+    <tr><td class="text-right">户籍地址:</td><td>{{ cert_data.certification_data.IdCardAddress }}</td></tr>
+    <tr><td class="text-right">身份证照片:</td><td class="text-left">
+            <div><img style="max-width: 90%" src="{{ IMAGE_URL }}{{ cert_data.certification_data.IdCardFrontPhoto }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ cert_data.certification_data.IdCardFrontPhoto }}" title="身份证正面照片" target="_blank">点击查看图片</a></p>
+            </div>
+
+            <div><img style="max-width: 90%" src="{{ IMAGE_URL }}{{ cert_data.certification_data.IdCardBackPhoto }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ cert_data.certification_data.IdCardBackPhoto }}" title="身份证背面照片" target="_blank">点击查看图片</a></p>
+            </div>
+        </td>
+    </tr>
+    {% if cert_data.type !='person' %}
+        <tr><td class="text-right">营业执照号码:</td><td>{{ cert_data.certification_data.businessLicenseNo }}</td></tr>
+        <tr><td class="text-right">公司地址:</td><td>{{ cert_data.certification_data.companyAddress }}</td></tr>
+        <tr><td class="text-right">营业执照照片:</td><td><img style="max-width: 90%" src="{{ IMAGE_URL }}{{ cert_data.certification_data.licensePhoto }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ cert_data.certification_data.licensePhoto }}" title="营业执照照片" target="_blank">点击查看图片</a></p>
+            </td></tr>
+        <tr><td class="text-right">税务登记证照片:</td><td><img style="max-width: 90%" src="{{ IMAGE_URL }}{{ cert_data.certification_data.taxLicensePhoto }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ cert_data.certification_data.taxLicensePhoto }}" title="税务登记证照片" target="_blank">点击查看图片</a></p>
+            </td></tr>
+        <tr><td class="text-right">组织机构代码证照片:</td><td><img style="max-width: 90%" src="{{ IMAGE_URL }}{{ cert_data.certification_data.organizationPhoto }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ cert_data.certification_data.organizationPhoto }}" title="组织机构代码证照片" target="_blank">点击查看图片</a></p>
+            </td></tr>
+    {% endif %}
+    <tr>
+        <td class="text-right">认证状态:</td>
+        <td><span class="label {{ cert_data.certification_status == 3?'bg-primary':(cert_data.certification_status==2?'bg-info':'bg-danger') }}">
+                {{cert_data.certification_status == 3?'已认证':(cert_data.certification_status==2?'申请中':'未通过') }}</span></td>
+    </tr>
+    <tr>
+        <td class="text-right">认证操作:</td>
+        <td>
+            <form action="../api/member.certification.verify" class="ajax-post popup-error">
+                <input type="hidden" name="mid" value="{{ cert_data.mid }}">
+                <div class="form-group">
+                    <select class="form-control required" name="certification_status" data-message-required="请选择认证状态">
+                        <!-- //认证状态(3:认证成功2:认证中;1:未通过认证;) -->
+                        <option value="">请选择认证状态</option>
+                        <option value="3">认证通过</option>
+                        <option value="1">认证失败</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="操作原因" name="remark" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-danger" type="submit">确认操作</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </td>
+    </tr>
+</table>

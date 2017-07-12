@@ -1,0 +1,153 @@
+{% extends '../page.layout.twig' %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.js"></script>
+    <link rel="stylesheet" href="{{ SITE_URL }}/assets/js/chosen_v1.7.0/chosen-min.css">
+    <script src="{{ SITE_URL }}/assets/js/chosen_v1.7.0/chosen.jquery.js" type="text/javascript"></script>
+    <style>select option{}</style>
+    <script>
+        var ue = null;
+        $(function () {
+            var opt = {theme: 'ycs', zIndex: 9, initialFrameHeight: 300,autoHeightEnabled:false};
+            UE.getEditor('goods_content', opt);
+            ue = UE.getEditor('goods_content_tool', opt);
+            $('div.select-image').on('click', function () {
+                var div = $(this);
+                if(div.hasClass('selected')) return false;
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+            });
+            $('a.delete-select-image').on('click', function () {
+                var div = $(this).parents('.select-image').filter('.selected');
+                div.find('.preview').find('.selected-ele').remove();
+                div.removeClass('selected');
+                return false;
+            });
+            ue.ready(function () {
+                ue.hide();
+                ue.addListener('beforeinsertimage', function (eventName, images) {
+                    if(images){
+                        $('div.select-image:not(.selected)').each(function(index){
+                            if(index < images.length){
+                                var ele = $(this),url = images[index]['src'],alt = images[index]['alt'];
+                                var _d = $( '<div class="selected-ele"><img src="'+url+'">' +
+                                        '<input name="goods_image[]" value="'+alt+'" type="hidden"></div>');
+                                ele.addClass('selected').find('.preview').append(_d);
+                            }
+                        });
+                    }
+//                    $("#image_").attr("value", arg[0].src);
+//                    $('#up').text('重新上传');
+                });
+            });
+            $('.form-goods-save').on('submit',function(){
+                var frm = $(this),data = frm.serializeArray();
+                if(frm.valid()){
+                    modalLoading.show('保存数据中...')
+                    $.post(frm.attr('action'), data, function (ret) {
+                        if(common_config.ajax.process(ret)){
+                            location.href = '../member/goods.html';
+                        }
+                    }, 'json').error(common_config.ajax.error);
+                }
+                return false;
+            });
+            $('select.chosen-select').chosen({ no_results_text: '没有找到匹配项' });
+        });
+    </script>
+{% endblock %}
+{% block app_content %}
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <form class="form-horizontal form-goods-save" action="save.html">
+                    <input type="hidden" name="id" value="{{ g.id }}">
+                    <div class="form-group">
+                        <label class="control-label">材料名称</label>
+                        <div>
+                            <input type="text" name="title" class="form-control required" value="{{ g.title }}"
+                                   placeholder="请填写材料的名称" data-message-required="必须填写材料的名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">材料价格</label>
+
+                        <div>
+                            <input type="text" name="price_sale" class="form-control required" placeholder="请填写材料价格"
+                                   data-message-required="必须填写材料价格" value="{{ g.price_sale }}">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">材料分类</label>
+                                <div>
+                                    <select name="cate_id" class="form-control required chosen-select" placeholder="请选择材料分类"
+                                            data-message-required="请选择材料分类" data-placeholder="请选择材料分类">
+                                        <option value="" disabled="disabled">请选择材料分类</option>
+                                        {% for c in categoryList %}
+                                            <optgroup label="{{ c.cate_name }}">
+                                                {% for cc in c.child %}
+                                                    <option value="{{ cc.id }}" {{ g.cate_id == cc.id?'selected="selected"':'' }}>{{ cc.cate_name }}</option>
+                                                {% endfor %}
+                                            </optgroup>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">材料颜色</label>
+                                <div>
+                                    <select name="goods_color[]" class="form-control required chosen-select" placeholder="请选择材料颜色"
+                                            data-message-required="请选择材料颜色" multiple="multiple" size="1" data-placeholder="请选择材料颜色">
+                                        <option value="" disabled="disabled">请选择材料颜色</option>
+                                        {% for c in colorList %}
+                                            <option value="{{ c.value }}" {{ g.goods_color == c.value?'selected="selected"':'' }}>{{ c.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">
+                            材料图片 <span class="sub-title">材料图片不要太大</span>
+                        </label>
+
+                        <div class="select-image-wrapper clearfix">
+                            {% for i in 1..5 %}
+                                <div class="pull-left select-image">
+                                    {% if i == 1 %}
+                                        <span class="main-image">材料主图</span>
+                                    {% endif %}
+                                    <div class="preview">
+                                        <i class="icon iconfont icon-tianjia"></i>
+                                    </div>
+                                    <div class="tool">
+                                        <a href="#" class="delete-select-image">
+                                            <i class="icon iconfont icon-remove del" title="删除"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">材料描述</label>
+
+                        <div>
+                            <textarea name="goods_content" id="goods_content">{{ g.goods_content|raw }}</textarea>
+                        </div>
+                        <div class="">
+                            <textarea id="goods_content_tool"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">发布材料</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

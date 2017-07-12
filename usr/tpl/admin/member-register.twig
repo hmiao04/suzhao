@@ -1,0 +1,197 @@
+{% extends 'admin.twig' %}
+{% block title %}会员注册 - 会员管理 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light" id="tpl-view-save-m">
+                <form class="form-horizontal form-ajax-post validate" role="form" action="../api/member.save" method="post">
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label for="member-name">姓名</label>
+                            <input type="text" class="form-control required" placeholder="请输入会员的姓名" v-model="m.name"
+                                   data-message-required="请输入会员的姓名" name="name">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="member-name">出生日期</label>
+                            <div class="input-group date">
+                                <input type="text" class="form-control required" placeholder="请选择出生日期" readonly="readonly"
+                                       data-message-required="请选择出生日期" v-model="m.birth_date" name="birth_date">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                            <label id="birth_date-error" class="error" for="birth_date"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label>性别</label>
+                            <div class="radio">
+                                <label><input type="radio" name="sex" checked="checked" v-model="m.sex" value="0">男</label>
+                                <label style="margin-left: 20px;"><input type="radio" name="sex" v-model="m.sex" value="1">女</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 form-inline">
+                            <label>归属地</label>
+                            <div class="select city-area-wrapper">
+                                <select name="province" v-model="m.province" class="form-control data-province required"
+                                        data-message-required="请选择归属地" >
+                                </select>
+                                <select name="city" v-model="m.city" class="form-control data-city" >
+                                </select>
+                                <select name="country" v-model="m.country" class="form-control data-country">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label for="member-name">身份证号</label>
+                            <input type="text" class="form-control regex" placeholder="请输入会员的身份证号"
+                                   data-regex="^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$"
+                                   data-message-regex="请输入正确的身份证号" name="idcard"
+                                   data-message-required="请输入会员的身份证号" v-model="m.idcard">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="member-name">手机号码</label>
+                            <input type="text" class="form-control required regex" placeholder="请输入会员的手机号码"
+                                   data-regex="^1[\d+]{10}$" data-message-regex="请输入正确的手机号码" name="phone"
+                                   data-message-required="请输入会员的手机号码" v-model="m.phone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label for="member-name">登录账号</label>
+                            <input type="text" class="form-control required" placeholder="请输入登录账号"
+                                   data-message-required="请输入登录账号" v-model="m.login_account" name="login_account">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="member-name">登录密码</label>
+                            <input type="text" class="form-control required" placeholder="请输入登录密码"
+                                   data-message-required="请输入登录密码" v-model="m.login_pwd" name="login_pwd">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <label>归属区域:</label>
+                            <span>{{ userInfo.extraData.company_name }}</span>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                    </div>
+                    <div class="action-control pull-right">
+                        <button class="btn btn-default" type="reset">重填</button>
+                        <button class="btn btn-primary" type="button" v-on:click="submitForm">
+                            <i class="glyphicon glyphicon-floppy-saved m-r-xs"></i>注册
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script src="{{ SITE_URL }}/static/scripts/area.js"></script>
+    <link rel="stylesheet" href="{{ SITE_URL }}/static/css/bootstrap-datepicker.css">
+    <script src="{{ SITE_URL }}/static/scripts/bootstrap-datepicker.js"></script>
+    <script>
+        var w = $('.city-area-wrapper'),
+                sp = w.find('select.data-province'),
+                sc = w.find('select.data-city').hide(),
+                scc = w.find('select.data-country').hide();
+        $(function(){
+            var dataModel = {
+                m:{
+                    id:0,
+                    name:'',
+                    sex:'',
+                    birth_date:'',
+                    idcard:'',
+                    phone:'',
+                    register_time:'',
+                    company_id:'',
+                    province:'',
+                    city:'',
+                    country:'',
+                    register_by:'',
+                    state:'1'
+                }
+            };
+            var editApp = new Vue({
+                el: '#tpl-view-save-m',
+                data:dataModel,
+                methods:{
+                    submitForm:function(){
+                        var frm = $('form.form-ajax-post');
+                        dataModel.m.province = frm.find('select[name=province]').val();
+                        dataModel.m.city = frm.find('select[name=city]').val();
+                        dataModel.m.country = frm.find('select[name=country]').val();
+                        if(frm.valid()){
+                            $.post(frm.attr('action'),dataModel.m,function(ret){
+                                if(ret['code'] == 0){
+                                    location.reload();
+                                }else{
+                                    alert(ret['message']);
+                                }
+                            },'json');
+                        }
+                        return  false;
+                    }
+                }
+            });
+            $('.input-group.date').datepicker({language: 'zh-CN',autoclose:true});
+            var initCityDataSelect = function (callback) {
+                if (w.length == 0 || sp.length == 0) return;
+                scc.on('change', function () {
+                    typeof(callback) == "function" && callback();
+                });
+                sc.on('change', function () {
+                    var pid = $(this).attr('pid'), cid = this.value;
+                    if (cid && cityData[pid]['child'][cid] && cityData[pid]['child'][cid]['child']) {
+                        scc.show().children().remove();
+                        var ces = cityData[pid]['child'][cid]['child'];
+//                        $('<option value="">全部</option>').appendTo(scc);
+                        for (var ccid in ces) {
+                            $('<option></option>').appendTo(scc).attr('value', ccid).html(ces[ccid]['city_name']);
+                        }
+                        if(scc.children().length == 0){
+                            scc.hide();
+                        }
+                    } else {
+                        scc.hide();
+                    }
+                    typeof(callback) == "function" && callback();
+                });
+                sp.on('change', function () {
+                    var _pid = this.value;
+                    scc.hide();
+                    if (_pid && cityData[_pid]['child']) {
+                        sc.show().attr('pid', _pid).children().remove();
+                        var cities = cityData[_pid]['child'];
+//                        $('<option value="">全部</option>').appendTo(sc);
+                        for (var cid in cities) {
+                            $('<option></option>').appendTo(sc).attr('value', cid).html(cities[cid]['city_name']);
+                        }
+                        if(sc.children().length == 0){
+                            sc.hide();
+                        }else{
+                            sc.trigger('change');
+                        }
+                    } else {
+                        sc.hide();
+                    }
+                    typeof(callback) == "function" && callback();
+                });
+                var currentPid = null,index = 0;
+                $('<option></option>').appendTo(sp).attr('value', '').html('-- 请选择 --');
+                for (var pid in cityData) {
+                    $('<option></option>').appendTo(sp).attr('value', pid).html(cityData[pid]['city_name']);
+                }
+                setTimeout(function(){
+                    sp.children()[0].selected = true;
+                    sp.trigger('change');
+                },20)
+            };
+            initCityDataSelect(function(){});
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,18 @@
+<ul class="media-list">
+    {% for g in goods_list %}
+        <li class="media" data-goods-id="{{ g.id }}">
+            <div class="media-left pull-left">
+                <img class="media-object" src="{{ res_url }}{{ g.main_goods_image }}" style="width: 64px; height: 64px;">
+            </div>
+            <div class="media-body">
+                <p class="media-heading">{{ g.title }}</p>
+                <div class="goods-price" style="color: #f00;">{{ g.price_sale }}元</div>
+            </div>
+            <span class="select-text">点击选择</span>
+        </li>
+    {% endfor %}
+</ul>
+<nav class="text-right">
+    {{ pageString|raw }}
+    <br class="clear">
+</nav>

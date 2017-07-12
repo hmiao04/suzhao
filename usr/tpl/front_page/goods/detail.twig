@@ -1,0 +1,53 @@
+{% extends '../page.layout.twig' %}
+{% block title %}{{ goods.title }}{% endblock %}
+{% block block_class_name %}goods-info-app tuan-info-app{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="goods-info clearfix">
+            <div class="pull-left" style="width: 330px;">
+                <div class="tb-booth tb-pic tb-s310">
+                    <a href="{{ res_url }}{{ goods.goods_image[0] }}?o=webp"><img src="{{ res_url }}{{ goods.goods_image[0] }}?resize/w=420/h=420&x-oss-process=image/resize,m_fixed,w_420,h_420/format,webp" rel="{{ res_url }}{{ goods.goods_image[0] }}?o=webp" class="jqzoom" /></a>
+                </div>
+
+                <ul class="tb-thumb" id="thumblist">
+                    {% for pic in goods.goods_image %}
+                    <li class="{{ loop.index0 == 0 ? 'tb-selected':'' }}">
+                        <div class="tb-pic tb-s40">
+                            <a href="#"><img src="{{ res_url }}{{ pic }}?resize/w=50/h=50&x-oss-process=image/resize,m_fixed,w_50,h_50/format,webp" mid="{{ res_url }}{{ pic }}?resize/w=420/h=420&x-oss-process=image/resize,m_fixed,w_420,h_420/format,webp" big="{{ res_url }}{{ pic }}?o=webp"></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="" style="margin-left:430px;">
+                <h1 class="goods-title">{{ goods.title }}</h1>
+                <div class="goods-attr">
+                    <span class="title">价格:</span>
+                    <span class="value">{{ goods.price_sale }}</span>
+                </div>
+                <div class="goods-attr">
+                    <span class="title">颜色:</span>
+                    <span class="value">{{ goods.goods_color }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="goods-content">
+            {{ goods.goods_content|raw }}
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/ycs/plugins/jquery.imagezoom.min.js"></script>
+    <script>
+        $(function(){
+            $(".jqzoom").imagezoom({xzoom:410,yzoom:410});
+            $("#thumblist li a").on('mouseover',function(){
+                $(this).parents("li").addClass("tb-selected").siblings().removeClass("tb-selected");
+                $(".jqzoom").attr('src',$(this).find("img").attr("mid"));
+                $(".jqzoom").attr('rel',$(this).find("img").attr("big"));
+                return false;
+            })
+
+        });
+    </script>
+{% endblock %}

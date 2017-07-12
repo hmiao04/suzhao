@@ -1,0 +1,323 @@
+{% extends 'layout.twig' %}
+{% block title %}实名认证{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-title">
+            <h2 class="pull-left">实名认证</h2>
+        </div>
+    </div>
+    <div class="certification-progress">
+        <ul class="nav nav-pills nav-justified step step-arrow">
+            <li class="{{ identification.status >= 0 ?'active':'' }}"><a>上传实名认证资料</a></li>
+            <li class="{{ identification.status > 1 ?'active':'' }}"><a>等待审核</a></li>
+            <li class="{{ identification.status > 2 ?'active':'' }}"><a>认证成功</a></li>
+        </ul>
+    </div>
+    {% if identification.status == 1 or  identification.status == 2 %}
+     <div class="certification-message alert alert-warning">
+         <p>提交时间：{{ identification.post_time|date('Y-m-d h:i:s') }}</p>
+
+         {% if identification.status == 1 %}
+         <p>审核时间：{{ identification.certification_time|date('Y-m-d h:i:s') }}</p>
+         {% endif %}
+         <p>
+             审核状态：<span class="">审核{{ identification.status == 1?'失败':'中..' }}</span>
+             <strong style="color:#000;">{{ identification.status == 1?'(可以提交资料再次审核)':'' }}</strong>
+         </p>
+         {% if identification.status == 1 %}
+             <p>未通过原因：</p>
+             <p>{{ identification.remark }}</p>
+         {% endif %}
+     </div>
+    {% endif %}
+    <div class="certification-data">
+        <form action="{{ SITE_URL }}/api/v1/gateway.do?method=member.uploadcertification" method="post"
+              class="form-horizontal {{ identification.status <= 1 ?'active':'disabled' }} cert-data-form">
+            <input type="hidden" name="form_hash" value="{{ FROM_HASH }}">
+            <input type="hidden" name="member_id" value="{{ MEMBER_INFO.id }}">
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">真实名字</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="personName"
+                           data-message-required="请填写真实名字"
+                           value="{{ identification.data.personName}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label class="col-sm-3 control-label">性别</label>
+                <div class="col-sm-9">
+                    <select class="form-control required normal-form-control"
+                            data-message-required="请选择性别" name="personGender">
+                        <option value="">请选择性别</option>
+                        <option value="男" {{ identification.data.personGender == '男'?'selected="selected"':'' }}>男</option>
+                        <option value="女" {{ identification.data.personGender == '女'?'selected="selected"':'' }}>女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">出生日期</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="personBirthDate"
+                           data-message-required="请选择出生日期" onclick="laydate({max: laydate.now()})"
+                           value="{{ identification.data.personBirthDate}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">联系电话</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="personPhone"
+                           data-message-required="请填写联系电话"
+                           value="{{ identification.data.personPhone}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">QQ号码</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="personQQ"
+                           data-message-required="请填写QQ号码"
+                           value="{{ identification.data.personQQ}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">居住地址</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="personAddress"
+                           data-message-required="请填写居住地址"
+                           value="{{ identification.data.personAddress}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">户籍地址</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="IdCardAddress"
+                           data-message-required="请填写户籍地址"
+                           value="{{ identification.data.IdCardAddress}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">身份证号码</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control required normal-form-control" name="IdCard"
+                           data-message-required="请填写身份证号码"
+                           value="{{ identification.data.IdCard}}" placeholder="请务必正确填写">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">身份证正面照片</label>
+                <div class="col-sm-9">
+                    <input type="hidden" class="required normal-picture-upload"
+                           data-message-required="请上传身份证正面照片或者上传尚未完成"
+                           value="{{ identification.data.IdCardFrontPhoto }}" name="IdCardFrontPhoto"
+                           data-default-image="{{ SITE_URL }}/assets/images/idcard-img.png">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">身份证背面照片</label>
+                <div class="col-sm-9">
+                    <input type="hidden" class="required normal-picture-upload"
+                           data-message-required="请上传身份证背面照片或者上传尚未完成"
+                           value="{{ identification.data.IdCardBackPhoto }}" name="IdCardBackPhoto"
+                           data-default-image="{{ SITE_URL }}/assets/images/idcard-img2.png">
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label for="inputEmail3" class="col-sm-3 control-label">认证类型</label>
+                <div class="col-sm-9">
+                    <select class="form-control required normal-form-control" id="certification_type"
+                            data-message-required="请选择认证类型" name="type">
+                        <option value="">请选择认证类型</option>
+                        <option value="person" {{ identification.type == 'person'?'selected="selected"':'' }}>个人认证</option>
+                        <option value="company" {{ identification.type == 'company'?'selected="selected"':'' }}>企业认证</option>
+                    </select>
+                </div>
+            </div>
+            <div class="company_certification_data" style="display: none">
+                <div class="form-group form-inline">
+                    <label for="inputEmail3" class="col-sm-3 control-label">营业执照号码</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control required normal-form-control" name="businessLicenseNo"
+                               data-message-required="请填写营业执照号码"
+                               value="{{ identification.data.businessLicenseNo}}" placeholder="请务必正确填写">
+                    </div>
+                </div>
+                <div class="form-group form-inline">
+                    <label for="inputEmail3" class="col-sm-3 control-label">公司营业地址</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control required normal-form-control" name="companyAddress"
+                               data-message-required="请填写公司营业地址"
+                               value="{{ identification.data.companyAddress}}" placeholder="请务必正确填写">
+                    </div>
+                </div>
+                <div class="form-group form-inline">
+                    <label for="inputEmail3" class="col-sm-3 control-label">营业执照<br>
+                        <span class="notice">三证合一请上传相同证件</span><br>
+                        <span class="notice">照片副本需加盖公章</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="hidden" class="required normal-picture-upload"
+                               data-message-required="请上传营业执照或者上传尚未完成"
+                               data-size-height="270" data-size-width="200"
+                               value="{{ identification.data.licensePhoto }}" name="licensePhoto"
+                               data-default-image="{{ SITE_URL }}/assets/images/zhizao.jpg">
+                    </div>
+                </div>
+                <div class="form-group form-inline">
+                    <label for="inputEmail3" class="col-sm-3 control-label">经营场地照片</label>
+                    <div class="col-sm-9">
+                        <input type="hidden" class="required normal-picture-upload"
+                               data-message-required="请上传经营场地照片或者上传尚未完成"
+                               data-size-height="270" data-size-width="200"
+                               value="{{ identification.data.taxLicensePhoto }}" name="taxLicensePhoto"
+                               data-default-image="{{ SITE_URL }}/assets/images/suiwu.jpg">
+                    </div>
+                </div>
+                <div class="form-group form-inline">
+                    <label for="inputEmail3" class="col-sm-3 control-label">其他</label>
+                    <div class="col-sm-9">
+                        <input type="hidden" class="normal-picture-upload"
+                               data-message-required="请上传组织机构代码证或者上传尚未完成"
+                               data-size-height="270" data-size-width="200"
+                               value="{{ identification.data.organizationPhoto }}" name="organizationPhoto"
+                               data-default-image="{{ SITE_URL }}/assets/images/zuzhidaima-img.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                {% if identification.status <= 1  %}
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-info">提交审核</button>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <style>
+        .picture-upload-wrapper{display: inline-block;}
+        form label.error{top: 7px;left:320px;}
+        .picture-upload-wrapper+label.error{top: 7px;left:230px;}
+    </style>
+    <script src="{{ cdn }}/assets/js/laydate/laydate.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/third-party/webuploader/webuploader.js"></script>
+    <script>
+        $(function(){
+            var uploadUrl = '/file/upload?action=picture&cate_id=0&file_key=file',res_url = '{{ res_url }}';
+            $('.disabled').find('input').each(function(){
+                $(this).attr('readonly','readonly').attr('disabled','disabled').addClass('just-show');
+            });
+            $('#certification_type').on('change',function(){
+                if($(this).val() == 'company'){
+                    $('.company_certification_data').show();
+                    $('.company_certification_data').find('.required').removeClass('ignore');
+                    $('.company_certification_data').find('input.normal-picture-upload').each(function(){
+                        if($(this).data('uploader-instance')){
+                            $(this).data('uploader-instance').refresh();
+                        }
+                    });
+
+                }else{
+                    $('.company_certification_data').hide();
+                    $('.company_certification_data').find('.required').addClass('ignore');
+                }
+            });
+            $('#certification_type').trigger('change');
+
+            $('.disabled').find('select').each(function(){
+                $(this).attr('readonly','readonly').attr('disabled','disabled').addClass('just-show');
+                $('<span class="hidden-arrow"></span>').insertAfter(this);
+            });
+            var isDisabled = $('form.disabled').length == 1;
+            $('input.normal-picture-upload[type=hidden]').each(function(){
+                var _id = 'picker_' + Math.random().toString().replace('.',''),picField = $(this);
+                var uploadWrapper = $('<div class="picture-upload-wrapper"></div>').insertAfter(this);
+                var err = $('<span class="error-text-wrapper"></span>').appendTo(uploadWrapper);
+                var success = $('<span class="success-text-wrapper"></span>').appendTo(uploadWrapper);
+                var $img = $('<img class="preview-img">').appendTo(uploadWrapper);
+                var defaultImg = null;
+                if($(this).attr('data-default-image')){defaultImg = $(this).attr('data-default-image');}
+                if($(this).val()){ defaultImg = res_url + $(this).val();}
+                $img.attr('src',defaultImg);
+                if(isDisabled){return;}
+                var _w = 200,_h = 120;
+                if(picField.attr('data-size-width')){
+                    _w = parseInt(picField.attr('data-size-width'));
+                }
+                if(picField.attr('data-size-height')){
+                    _h = parseInt(picField.attr('data-size-height'));
+                }
+                var picker = $('<div>选择</div>').appendTo(uploadWrapper).attr('id',_id);
+                picker.css({width:_w,height:_h});
+                $img.css({width:_w,height:_h});
+
+                var uploader = WebUploader.create({
+                    auto: true,
+                    swf: base_url + '/assets/ueditor/third-party/webuploader/Uploader.swf',
+                    server: base_url + uploadUrl,
+                    pick:'#'+_id,
+                    // 只允许选择图片文件。
+                    accept: {
+                        title: 'Images',
+                        extensions: 'gif,jpg,jpeg,bmp,png',
+                        mimeTypes: 'image/*'
+                    },
+                    thumb:{
+                        width: _w,
+                        height: _h,
+                        quality: 90,
+                        allowMagnify: true,
+                        crop: false,
+                        type: 'image/jpeg'
+                    }
+                });
+                // 当有文件添加进来的时候
+                uploader.on( 'fileQueued', function( file ) {
+                    err.hide();
+                    success.show().text('上传中...').addClass('process');
+                    picField.val('');
+                    uploader.makeThumb( file, function( error, src ) {
+                        if ( error ) {
+                            $img.replaceWith('<span>不能预览</span>');
+                            return;
+                        }
+                        $img.attr( 'src', src );
+                    }, _w, _h );
+                });
+                // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+                uploader.on( 'uploadSuccess', function(file,ret) {
+                    if(ret['code'] == 0){
+                        picField.val(ret['data']);
+                        success.text('上传成功').removeClass('process');
+                        $( '#'+file.id ).addClass('upload-state-done');
+                    }else{
+                        success.text('上传失败,请重试').removeClass('process');
+                    }
+                });
+                uploader.on( 'uploadError', function( file ) {
+                    err.show().text('上传失败,请重试');
+                    success.hide();
+                });
+                picField.data('uploader-instance',uploader);
+            });
+            if(isDisabled) return;
+
+            $('.cert-data-form').on('submit',function(){
+                var frm = $(this);
+                if(frm.valid({ignore:'.ignore'})){
+                    modalLoading.show('提交审核资料中...');
+                    $.post(frm.attr('action'),frm.serializeArray(),function(ret){
+                        if(common_config.ajax.process(ret)){
+                            modalLoading.msg('资料提交成功，请耐心等待审核...',4000,function(){
+                                location.reload();
+                            });
+                        }
+                    },'json').error(common_config.ajax.error);
+                }else{
+                    modalLoading.msg('资料尚未正确填写...',1000);
+
+                }
+                return false;
+            })
+        })
+    </script>
+{% endblock %}

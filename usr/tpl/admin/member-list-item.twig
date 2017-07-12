@@ -1,0 +1,44 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th width="80px">MID</th>
+        <th>姓名</th>
+        <th width="80px">性别</th>
+        <th>手机号</th>
+        <th width="120px">认证状态</th>
+        <th width="120px">认证类型</th>
+        <th width="100px">注册日期</th>
+        <th width="80px">状态</th>
+        <th width="220px">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for m in memberList %}
+        <tr>
+            <td>{{ m.id }}</td>
+            <td><a href="view.member-report?uid={{ m.id }}" class="no-ajax">{{ m.name }}</a></td>
+            <td>{{ m.sex == 0?'男':'女' }}</td>
+            <td>{{ m.phone }}</td>
+            <td>
+                {% if m.mid %}
+                    <span class="label {{ m.certification_status == 3?'bg-primary':(m.certification_status==2?'bg-warning':'bg-danger') }}">{{m.certification_status == 3?'已认证':(m.certification_status==2?'申请中':'未通过') }}</span>
+                {% else %}
+                    <span class="label bg-info">未认证</span>
+                {% endif %}
+            </td>
+            <td>{{ m.mid?(m.type=='person'?'个人':'企业'):'-' }}</td>
+            <td>{{ m.register_time|date("Y-m-d") }}</td>
+            <td><span class="label {{ m.status == 1 ?'bg-success':'bg-warning' }}">{{ m.status == 1 ?'正常':'禁用' }}</span></td>
+            <td>
+                <a href="##" data-mode="edit"  data-toggle="modal" class="hidden" data-url="../api/member.info?id={{ m.id }}" data-target="#saveData">查看</a>
+                <a href="##" data-toggle="modal" data-url="view.member-account-info?mid={{ m.id }}" data-target="#member-account">账号信息</a>
+                {% if m.mid %}
+                    <a href="##" data-toggle="modal" data-url="../api/member.certification-info?mid={{ m.id }}" data-target="#member-certification">认证信息</a>
+                {% endif %}
+                <a href="../api/member.delete?id={{ m.id }}" class="delete-link ajax-post confirm">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

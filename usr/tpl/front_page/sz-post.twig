@@ -1,0 +1,51 @@
+{% extends "member.layout.twig" %}
+
+{% block app_content %}
+{% if error %}
+{{ error }}
+{% else %}
+ <form method="POST" action="/api/sz.save" >
+	{% if pageinfo.id %}
+	<input type="hidden" name="id" value="{{ pageinfo.id }}">
+	{% endif %}
+
+	<div class="form-group">
+		<label for="formtitle">标题</label>
+		<input type="text" name="title" id="formtitle" class="form-control" placeholder="请输入标题" value="{{ pageinfo.find_title }}">
+	</div>
+	<div class="form-group">
+                           <label for="formdate">在以下时间内完成</label>
+                           <input type="text" name="date" id="formdate" class="form-control" placeholder="请输入标题" value="{{ pageinfo.wish_finish_time }}">
+                       </div><div class="form-group">
+                           <label for="formprice">完成酬劳</label>
+                           <input type="text" name="price" id="formprice" class="form-control" placeholder="请输入标题" value="{{ pageinfo.paid_price }}">
+                       </div><div class="form-group">
+                           <label for="formimage">主图</label>
+                           <span id="the-image-up-w" style="display: inline-block;position: relative;width: 160px;float: left;"></span>
+                           <div class="fileinput fileinput-new" data-provides="fileinput">
+                               <div class="fileinput-new thumbnail" data-trigger="fileinput">
+                                   <img class="preview-img " src="{{ SITE_URL }}{% if pageinfo.main_image %}{{ pageinfo.main_image }}{% else %}/assets/images/nil-up.png{% endif %}">
+                               </div>
+                               <div>
+                                   <div class="btn btn-default btn-file">
+                                       <span class="fileinput-new">选择图片</span>
+                                       <span class="fileinput-exists">更改</span>
+                                       <input type="file" data-icon="false" data-value="{{ pageinfo.main_image }}" data-message-required="请选择封面图片" error-label-wrapper="#the-image-up-w" name="image" id="formimage" accept="image/*">
+                                   </div>
+                               </div>
+                           </div>
+                       </div><div class="form-group">
+                           <label for="formbrief">要求</label>
+                           <input type="text" name="brief" id="formbrief" class="form-control" placeholder="请输入标题" value="{{ pageinfo.find_brief }}">
+                       </div><div class="form-group">							<div class="col-sm-12">								<label for="formcontent">详情内容</label>								<textarea class="page-content" name="content" id="formcontent" style="height: 200px;style: none;">{{ pageinfo.find_content }}</textarea>							</div>						</div><div class="form-group">
+                           <label for="formseq">排序</label>
+                           <input type="text" name="seq" id="formseq" class="form-control" placeholder="请输入标题" value="{{ pageinfo.seq }}">
+                       </div>
+                        <button class="btn btn-default">
+                           <i class="glyphicon m-r-xs"></i>
+						   提交
+						</button>
+
+</form>
+{% endif %}
+{% endblock %}

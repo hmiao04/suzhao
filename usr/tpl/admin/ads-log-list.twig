@@ -1,0 +1,152 @@
+{% extends 'admin.twig' %}
+{% block title %}广告列表 - 广告管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-heading text-2x clearfix">
+                {{ pageTitle }}访问日志
+                <a href="view.ads-log-list" class="pull-right" style="font-size: 14px;">所有的日志</a>
+            </div>
+            <div class="data-table-wrapper">
+                <table class="table m-b-none">
+                    <thead>
+                    <tr>
+                        <th>日志ID</th>
+                        <th>广告名称</th>
+                        <th>记录时间</th>
+                        <th>用户IP</th>
+                        <th>是否结算</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in logList %}
+                        <tr>
+                            <td>{{ a.LogId }}</td>
+                            <td>{{ a.AdsName }}</td>
+                            <td>{{ a.LogDateTime|date('Y-m-d H:i:s') }}</td>
+                            <td>{{ a.FromClient }}</td>
+                            <td>{{ a.Paid == 1?'已':'未' }}结算</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'layout.page.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <script>
+        $(function(){
+            $('.fileinput').each(function() {
+                var wp = $(this), img = wp.find('img.preview-img'),
+                        select = wp.find('span.fileinput-new'),
+                        change = wp.find('span.fileinput-exists'),
+                        remove = wp.find('a.fileinput-exists'),
+                        file = wp.find("[type=file]"),
+                        trigger = wp.find('[data-trigger="fileinput"]');
+                wp.on('change', function () {
+                    select.hide();
+                    change.show();
+                });
+                trigger.on('click.bs.fileinput',function(){
+                    file.trigger('click');return false;
+                });
+                file.on('change.bs.fileinput', $.proxy(this.change, this))
+
+                if (img.hasClass('has-pic')) {
+                    select.hide();
+                    change.show();
+                }
+                file.on('change',function(){
+                    var fs = this.files;
+                    var reader = new FileReader();
+                    var element = this.$element;
+
+                    var file = fs[0];
+                    reader.onload = function (re) {
+                        var $img = img.attr('src', re.target.result);
+                    };
+
+                    reader.readAsDataURL(file);
+                    wp.trigger('change');
+                })
+            });
+
+            $(document).on('click.fileinput.data-api', '[data-provides="fileinput"]',function(e){
+                var $target = $(e.target).closest('[data-dismiss="fileinput"],[data-trigger="fileinput"]');
+                if ($target.length > 0) {
+                    e.preventDefault();
+                    $target.trigger('click.bs.fileinput');
+                }
+            });
+
+            var commonData = {
+                initAds:{
+                    "AdsId": 0,
+                    "AdsName": "",
+                    "BusinessName": "",
+                    "BusinessAttr": "",
+                    "BusinessAddr": "",
+                    "BusinessUrl": "",
+                    "AdsCategory": "1",
+                    "AdsImage": '',
+                    "AdsDesc": '',
+                    "ClickPrice": "0",
+                    "SortScore": "0",
+                    "State": "1",
+                    "LogSaveDays": "30"
+                },
+                ads:{}
+            };
+            var adsSaveApp = new Vue({
+                el:'#saveAds',
+                data:commonData,
+                methods:{
+                    saveAds:function(){
+                        var frm = $('.frm-saveAds');
+                        if(frm.valid()){
+                            var formData = new FormData(frm[0]);
+                            $.ajax({
+                                url : 'api/ads.save',
+                                type : 'POST',
+                                data : formData,
+                                dataType:'json',
+                                processData : false,
+                                contentType : false,
+                                success : function(ret) {
+                                    if(ret['code'] == 0){
+                                        location.reload();
+                                    }else{
+                                        alert(ret['message']);
+                                    }
+                                },
+                                error : function(responseStr) {
+                                    alert("失败:" + responseStr);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            $('#saveAds').on('show.bs.modal',function(e){
+                var modal = $(this);
+                var link = $(e.relatedTarget),mode = link.attr('data-mode');
+                if(mode == 'edit'){
+                    modal.find('.modal-title').html('修改广告数据')
+                    $.get('api/ads.detail',{'adsId':link.attr('data-ads-id')},function(ret){
+                        if(ret['code'] == 0){
+                            commonData.ads = ret['data'];
+                        }else{
+                            alert(ret['message']);
+                        }
+                    },'json');
+                }else{
+                    commonData.ads = commonData.initAds;
+                    modal.find('.modal-title').html('新增广告')
+                }
+            });
+        });
+    </script>
+{% endblock %}

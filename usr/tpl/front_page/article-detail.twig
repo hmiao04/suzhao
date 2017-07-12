@@ -1,0 +1,21 @@
+{% extends 'page.layout.twig' %}
+{% block title %}{{ article.title }} - 速找网{% endblock %}
+{% block app_content %}
+    <div class="container">
+        <div class="row" style="padding: 50px 0;">
+            <div class="col-md-8">
+                <div class="article-content">
+                    {{ article.content|raw }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a href="javascript:void(0);" class="list-group-item disabled">帮助中心</a>
+                    {% for item in articleList %}
+                    <a href="view.html?id={{ item.alias }}" class="list-group-item">{{ item.title }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

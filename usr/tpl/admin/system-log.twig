@@ -1,0 +1,100 @@
+{% extends 'admin.twig' %}
+{% block title %}操作日志查看 - 系统管理{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+        <div class="panel panel-default">
+            <div class="panel-body b-b b-light">
+                <form class="form-inline ajax-query-form" role="form"
+                      action="?act=search"target="#log-list-wrapper">
+                    <div class="form-group">
+                        <label class="sr-only">日志时间:</label>
+                        <input name="datetime_star" type="text" class="form-control datetime" placeholder="日志开始时间"> -
+                        <input name="datetime_end" type="text" class="form-control datetime" placeholder="日志结束时间">
+                    </div>
+                    <div class="form-group">
+                        <input name="admin_account" type="text" class="form-control" placeholder="操作者名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only">日志类型</label>
+                        <select class="w-md form-control" name="log_type">
+                            <option value="">所有的日志</option>
+                            {% for ak,ac in logTypeList %}
+                            <option value="{{ ak }}">{{ ac }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">查看</button>
+                    </div>
+                </form>
+            </div>
+            <div class="data-table-wrapper ajax-data-wrapper" id="log-list-wrapper">
+                {% include 'system-log-item.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="dialog-modal-wrapper">
+        <div tabindex="-1" role="dialog" id="dataDetail" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <div class="modal-header">
+                        <h3 class="modal-title">数据</h3>
+                    </div>
+                    <div class="modal-body form-horizontal">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div tabindex="-1" role="dialog" id="member-account" class="modal fade" modal-window=""animate="animate">
+            <div class="modal-dialog modal-sm" style="width: 600px">
+                <div class="modal-content" modal-transclude="">
+                    <form class="validate save-res">
+                        <div class="modal-header" style="border-bottom: none;    padding-bottom: 0;">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                        </div>
+                        <div class="modal-body form-horizontal">
+                            <div class="the-error-cn" style="position: relative;"></div>
+                            <div id="account-info-body"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block last_script %}
+    <link rel="stylesheet" href="{{ SITE_URL }}/static/css/bootstrap-datepicker.css">
+    <script src="{{ SITE_URL }}/static/scripts/bootstrap-datepicker.js"></script>
+    <script>
+        $(function(){
+            $('.datetime').datepicker({language: 'zh-CN',autoclose:true});$('#saveData').on('show.bs.modal', function (e) {
+                var modal = $(this);
+                var link = $(e.relatedTarget), mode = link.attr('data-mode');
+                if(link.is('a')){
+                    modal.find('label.error').html('');
+                    if (mode == 'edit') {
+                        modal.find('.modal-title').html('修改数据')
+                        $.get(link.attr('data-url'), function (ret) {
+                            if (ret['code'] == 0) {
+                                editData.m = ret['data'];
+                            } else {
+                                alert(ret['message']);
+                            }
+                        }, 'json');
+                    } else {
+                        modal.find('form').get(0).reset();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

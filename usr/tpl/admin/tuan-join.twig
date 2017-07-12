@@ -1,0 +1,33 @@
+<table class="table m-b-none" style="width: 800px">
+    <thead>
+    <tr>
+        <th>参团编号</th>
+        <th>参团用户</th>
+        <th>参团出价</th>
+        <th>购买数量</th>
+        <th>参团时间</th>
+        <th>支付状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in dataList %}
+        <tr>
+            <td>{{ a.id }}</td>
+            <td>{{ a.member_id }}</td>
+            <td>{{ a.buy_price }}</td>
+            <td>{{ a.buy_count }}</td>
+            <td>{{ a.create_time|date('Y-m-d H:i') }}</td>
+            <td><span class="label {{ a.pay_status == 1 ?'bg-success':'bg-warning' }}">{{ a.pay_status == 1 ?'已':'未' }}支付</span></td>
+            <td>
+                <a href="pay_status.change?id={{ a.id }}&status={{ a.pay_status == 1 ? 0:1 }}" class="ajax-post text-info-dker confirm">改为{{ a.pay_status == 1 ? '未':'已' }}支付</a>
+                <a href="#" class="text-danger-dker" data-toggle="modal" data-target="#cancel-join">取消参团</a>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="7" class="text-center">还没有人参团</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

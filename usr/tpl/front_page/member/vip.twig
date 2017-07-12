@@ -1,0 +1,52 @@
+{% extends 'layout.twig' %}
+{% block title %}实地认证{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">实地认证</h2>
+            </div>
+            <div class="panel-body" style="padding: 20px 0;">
+                {% if vip_status == 1 %}
+                    <div class="text-center">
+                        <h2>实地认证已经通过了</h2>
+                    </div>
+                {% elseif vip_status == 3 %}
+                    <div class="text-center">
+                        <h2 class="text-info">实地认证中...</h2>
+                    </div>
+                {% elseif vip_status == 2 %}
+                    <div class="text-center">
+                        <h2 class="text-info">已经申请实地认证...</h2>
+                        <a href="bill.html?bill_sn={{ billData.bill_sn }}" target="_blank" class="btn btn-primary"
+                           style="width: 200px">请支付实地认证手续费</a>
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <h2 class="">您还没有申请实地认证</h2>
+                        <a href="join-vip2.html" target="_blank" class="btn btn-primary" style="width: 200px">申请实地认证</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">实地认证权益</h2>
+            </div>
+            <div class="panel-body" style="padding: 20px 0;">
+                <div class="col-md-6">
+                    <div class="alert alert-success" role="alert">展示联系方式</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-warning" role="alert">展示经营地址</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info" role="alert">商品优先展示</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-danger" role="alert">供应链贷款</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

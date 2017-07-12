@@ -1,0 +1,122 @@
+{% extends "../member/layout.twig" %}
+
+{% block member_content %}
+    <form method="POST" action="../picture/save.html">
+        <input type="hidden" name="id" value="{{ picture.id }}">
+        <input type="hidden" name="cate_id" value="{{ current_cate_id }}">
+        <div class="form-group">
+            <label for="formtitle">图片标签</label>
+            <input type="text" name="picture_tag" id="formtitle" class="form-control required"
+                   placeholder="图片标签，多个标签使用英文逗号隔开"
+                   value="{{ picture.picture_tag }}" data-message-required="请输入图片标签">
+        </div>
+        <div class="form-group">
+            <label class="control-label">
+                展示图片 <span class="sub-title"></span>
+            </label>
+            <div class="select-image-wrapper clearfix">
+                {% for i in 1..2 %}
+                    <div class="pull-left select-image">
+                        {% if i == 1 %}
+                            <span class="main-image">分享主图</span>
+                        {% endif %}
+                        <div class="preview">
+                            <i class="icon iconfont icon-tianjia"></i>
+                        </div>
+                        <div class="tool">
+                            <a href="picturedelete" class="delete-select-image">
+                              <i class="icon iconfont icon-remove del" title="删除"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+            <input type="hidden" name="data-image-value" class="required data-image-value" data-message-required="请设置分享展示图片">
+        </div>
+        <div class="form-group">
+            <label for="formcontent" class="control-label">图片描述</label>
+
+            <div>
+                <textarea name="picture_brief" class="required form-control" style="height:100px;"
+                          data-message-required="请输入图片描述">{{ picture.picture_brief }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="formcontent" class="control-label">详情内容</label>
+
+            <div>
+                <textarea name="picture_content" id="formcontent" class="required"
+                          data-message-required="请输入详情内容">{{ picture.picture_content }}</textarea>
+            </div>
+            <div class="">
+                <textarea id="formcontent_tool"></textarea>
+            </div>
+        </div>
+        <button class="btn btn-default" style="margin-top: 10px;width:100px;">
+            <i class="glyphicon m-r-xs"></i>提交
+        </button>
+
+    </form>
+{% endblock %}
+
+{% block end_body %}
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.config.js"></script>
+    <script src="{{ SITE_URL }}/assets/ueditor/ueditor.all.js"></script>
+    <script>
+        var ue = null, res_url = '{{ res_url }}';
+        $(function () {
+            var opt = {theme: 'ycs', zIndex: 9, initialFrameHeight: 300, autoHeightEnabled: false};
+            UE.getEditor('formcontent', opt);
+            ue = UE.getEditor('formcontent_tool', opt);
+            var imgWrapper = null;
+            $('div.select-image').on('click', function () {
+                var div = $(this);
+                imgWrapper = div.parents('.select-image-wrapper:eq(0)');
+                if (div.hasClass('selected')) return false;
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+            });
+            $('a.change-select-image').on('click', function () {
+                var imgDialog = ue.getDialog("insertimage");
+                imgDialog.open();
+                imgWrapper = $(this).parents('.select-image-wrapper:eq(0)');
+                return false;
+            });
+            ue.ready(function () {
+                ue.hide();
+                ue.addListener('beforeinsertimage', function (eventName, images) {
+                    if (images) {
+                        $('div.select-image', imgWrapper).each(function (index) {
+                            if (index < images.length) {
+                                var ele = $(this), url = images[index]['src'], alt = images[index]['alt'];
+                                ele.find('.selected-ele').remove();
+                                var _d = $('<div class="selected-ele"><img src="' + url + '">' +
+                                        '<input name="image_list[]" value="' + alt + '" type="hidden"></div>');
+                                $('input.data-image-value', imgWrapper.parent()).val(alt);
+                                ele.addClass('selected').find('.preview').append(_d);
+                            }
+                        });
+                    }
+                });
+
+                var _v = $('input[name=main_image]').val();
+                if (_v) {
+                    ue.trigger('beforeinsertimage', [{src: res_url + _v, alt: _v}]);
+                }
+            });
+            $('form').on('submit', function () {
+                var frm = $(this), data = frm.serializeArray();
+                if (frm.valid()) {
+                    modalLoading.show('保存数据中...')
+                    $.post(frm.attr('action'), data, function (ret) {
+                        if (common_config.ajax.process(ret)) {
+                            location.href = '../member/picture.html';
+                        }
+                    }, 'json').error(common_config.ajax.error);
+                }
+                return false;
+            });
+        })
+    </script>
+{% endblock %}

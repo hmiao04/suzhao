@@ -1,0 +1,19 @@
+<div style="width: 600px">
+    <p><b>团购商品</b>:<a href="../goods/info?id={{ gb.goods_id }}">{{ gb.goods_name }}</a></p>
+    <p><b>发起用户</b>:<a href="../member/info?id={{ gb.goods_id }}">{{ gb.member_name }}</a></p>
+    <p><b>团购发起时间</b>:{{ gb.create_time|date('Y-m-d') }}</p>
+    <p><b>团购状态:</b>
+        <span class="label {{ gb.group_status == 1 ?'bg-success':'bg-warning' }}">{{ gb.group_status == 1 ?'进行中':(gb.group_status == 2?'已被接':'已完结') }}</span>
+        <select class="form-control change-ajax-post valid" name="group_status" data-value="0" style="display: inline;width: 100px;"
+                data-post-url="tuan.update?id={{ gb.id }}" data-status-ele="#group_status_{{ gb.id }}" aria-invalid="false">
+            <option value="1" {{ gb.group_status == 1 ? 'selected="selected"':''}}>进行中</option>
+            <option value="2" {{ gb.group_status == 2 ? 'selected="selected"':''}}>已被接</option>
+            <option value="3" {{ gb.group_status == 3 ? 'selected="selected"':''}}>已完结</option>
+        </select>
+    </p>
+    <b>图片:</b>
+    <p><img src="{{ res_url }}{{ gb.main_image }}" style="max-height: 250px"></p>
+    <p style="max-width: 600px;" class="">{{ gb.find_content }}</p>
+    <b>要求:</b>
+    <p>{{ gb.require }}</p>
+</div>

@@ -1,0 +1,68 @@
+{% extends "../page.layout.twig" %}
+{% block block_class_name %}选择支付方式{% endblock %}
+{% block app_content %}
+
+    <div class="container">
+        <div id="myCarousel" class="carousel slide hide" data-ride="carousel" style="margin-top: 10px;">
+
+        </div>
+
+        <!--团购 -->
+        <div class="wrap tg" style="margin-top: 10px;">
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <div class="bor">
+                        <h4 class="text-center">选择支付方式</h4>
+                        <span class="text-danger">材料清单</span>
+                        <a class="block" href="#">
+                            <i class="icon fa fa-home glyphicon glyphicon-home"></i>
+                            <span class="red">材料信息</span>
+                            <span class="red">成本估算</span>
+                        </a>
+                        <a class="block" href="#">
+                            <i class="icon fa fa-home glyphicon glyphicon-bullhorn"></i>
+                            <span class="red">在线商品加工团购</span>
+                            <span class="red">品质保障,准时交货</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="bor">
+                        <h4 class="text-center">我要发起团购</h4>
+                        <form class="form-inline" method="post" target="publish_tuan"
+                              action="{{ SITE_URL }}/tuan/new.html?src=index">
+                            <div class="form-group">
+                                <label>团购商品</label>
+                                <input class="form-control required" type="text" name="title" placeholder="团购商品标题">
+                            </div>
+                            <div class="form-group">
+                                <label for="">期望团购价格</label>
+                                <input class="form-control required" type="text" name="tuan_price" placeholder="期望团购价格">
+                            </div>
+                            <div class="form-group">
+                                <label for="">团购数量</label>
+                                <input class="form-control required" name="buy_count" type="text" placeholder="团购数量">
+                            </div>
+                            <div class="form-group">
+                                <label for="">期望交货时间</label>
+                                <input class="form-control required" type="text" placeholder="期望交货时间"
+                                       onclick="laydate({ min: laydate.now()})" name="end_time">
+                            </div>
+                            <div class="form-group">
+                                <label for="">团购要求</label>
+                                <textarea name="require" class="form-control" style="height: 120px;"
+                                          placeholder="团购要求"></textarea>
+                            </div>
+                            <div class="form-group" style="margin-top: 7px;">
+                                <a class="btn btn-info pull-left" target="publish_tuan"
+                                   href="{{ SITE_URL }}/tuan/new.html">自定义</a>
+                                <button class="btn btn-success pull-right">立即发布需求</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

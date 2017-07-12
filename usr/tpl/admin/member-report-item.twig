@@ -1,0 +1,24 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>检查报告名称</th>
+        <th>日期</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for r in reportList %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.check_time }}</td>
+            <td>
+                <a href="##download?id={{ r.id }}">下载</a>
+                <a href="##delete?id={{ r.id }}" class="delete-link">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

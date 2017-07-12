@@ -1,0 +1,100 @@
+{% extends 'admin.twig' %}
+{% block title %}YCFMS系统管理首页{% endblock %}
+{% block AppContent %}
+    <div class="wrapper-md">
+
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <div class="panel bg-success panel-stats">
+                    <div class="stat">
+                        <h3>{{ member_count|number_format }}</h3>
+                        <p class="desc-label">注册会员</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel bg-info panel-stats">
+                    <div class="stat">
+                        <h3>{{ goods_count|number_format }}</h3>
+                        <p class="desc-label">发布材料</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-credit-card"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel bg-primary panel-stats">
+                    <div class="stat">
+                        <h3>{{ goods_count|number_format }}</h3>
+                        <p class="desc-label">发布团购</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-shopping-bag"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="panel bg-danger panel-stats">
+                    <div class="stat">
+                        <h3>{{ task_count|number_format }}</h3>
+                        <p class="desc-label">速找任务</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa  fa-briefcase"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="update pull-right"></div>
+                <i class="fa fa-cog"></i> 系统信息
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <tbody>
+                    <tr>
+                        <td style="border-top: none;">产品型号</td>
+                        <td style="border-top: none;">YCFramework Management System</td>
+                    </tr>
+                    <tr>
+                        <td>核心框架</td>
+                        <td>{{ app_version }}</td>
+                    </tr>
+                    <tr>
+                        <td>服务器操作系统</td>
+                        <td>{{ os }}</td>
+                    </tr>
+                    <tr>
+                        <td>运行环境</td>
+                        <td>{{ server_soft }}</td>
+                    </tr>
+                    <tr>
+                        <td>PHP版本</td>
+                        <td>{{ php_version }}</td>
+                    </tr>
+                    <tr>
+                        <td>MYSQL版本</td>
+                        <td>{{ db_info.version }}</td>
+                    </tr>
+                    <tr>
+                        <td>上传限制</td>
+                        <td>{{ max_upload }}</td>
+                    </tr>
+                    <tr>
+                        <td>服务器详情</td>
+                        <td><a href="?server">PHPINFO</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

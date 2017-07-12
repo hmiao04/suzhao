@@ -1,0 +1,36 @@
+{% extends 'layout.twig' %}
+{% block title %}我的账单列表{% endblock %}
+{% block member_content %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>标题</th>
+            <th width="50">金额</th>
+            <th width="140">创建时间</th>
+            <th width="140">支付时间</th>
+            <th width="70">状态</th>
+            <th width="100">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for b in bill_list %}
+            <tr>
+                <td><a href="?bill_sn={{ b.bill_sn }}" target="_blank">{{ b.bill_title }}</a></td>
+                <td>{{ b.pay_money }}</td>
+                <td>{{ b.create_time|date('Y-m-d H:i') }}</td>
+                <td>{{ b.paid_time|date('Y-m-d H:i') }}</td>
+                <td>{{ b.pay_status==1?'已':'未' }}支付</td>
+                <td>
+                    <a href="?bill_sn={{ b.bill_sn }}" target="_blank">详情</a>
+                    <a href="../bill/delete.html?bill_sn={{ b.bill_sn }}" data-message-confirm="账单删除后将无法恢复，是否继续?"
+                       class="ajax-post confirm">删除</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center">暂时没有查询账单</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

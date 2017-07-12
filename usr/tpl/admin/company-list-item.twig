@@ -1,0 +1,44 @@
+<table class="table m-b-none">
+    <thead>
+    <tr>
+        <th width="80px">编号</th>
+        <th>名称</th>
+        <th width="120px">类型</th>
+        <th width="120px">关联用户</th>
+        <th width="160px">联系电话</th>
+        <th width="100px">入驻日期</th>
+        <th width="100px">到期日期</th>
+        <th width="80px">排序</th>
+        <th width="80px">实地认证</th>
+        <th width="80px">入驻状态</th>
+        <th width="220px">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for m in companyList %}
+        <tr>
+            <td>{{ m.company_id }}</td>
+            <td>{{ m.company_name }}</td>
+            <td>{{ m.company_type }}</td>
+            <td>{{ m.member_name }}</td>
+            <td>{{ m.company_phone }}</td>
+            <td>{{ m.create_date|date("Y-m-d") }}</td>
+            <td>{{ m.invalid_date?m.invalid_date|date("Y-m-d"):'-' }}</td>
+            <td>{{ m.seq }}</td>
+            <td><span id="company_certification_status_{{ m.company_id }}"
+                      class="label {{ m.certification_status == 1 ?'bg-primary':(m.certification_status == 0?'bg-info':'bg-warning') }}">
+                    {{ m.certification_status == 1?'正常':(m.certification_status == 0?'未认证':'申请中') }}</span></td>
+            <td><span id="company_status_{{ m.company_id }}" class="label {{ m.status == 1 ?'bg-primary':'bg-warning' }}">{{ m.status == 1 ?'正常':'申请中...' }}</span></td>
+            <td>
+                <a href="##" class="ajax-load allow-close" data-url="company.info?id={{ m.company_id }}" data-modal-title="{{ m.company_name }}信息"
+                   data-mode="edit" data-toggle="modal" data-target="#modal-ajax">查看</a>
+                <a href="##" class="ajax-load allow-close" data-url="company.info?id={{ m.company_id }}&action=operation"
+                   data-modal-title="{{ m.company_name }}实地认证信息"  data-mode="edit" data-toggle="modal"
+                   data-target="#modal-ajax">状态认证</a>
+                <a href="company.update?id={{ m.company_id }}&status=-1" class="delete-link ajax-post confirm">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

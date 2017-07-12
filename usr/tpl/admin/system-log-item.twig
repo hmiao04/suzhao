@@ -1,0 +1,32 @@
+<table class="table m-b-none table-responsive">
+    <thead>
+    <tr>
+        <th width="160">日志时间</th>
+        <th width="80">日志类型</th>
+        <th width="120">操作者</th>
+        <th width="80">是否成功</th>
+        <th>目标地址</th>
+        <th width="80">请求来源</th>
+        <th width="80">其他信息</th>
+        <th width="80">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for l in logList %}
+        <tr>
+            <td>{{ l.log_time|date('Y-m-d H:i:s') }}</td>
+            <td>{{ l.log_type|format }}</td>
+            <td>{{ l.account }}</td>
+            <td>{{ l.log_state==1?'成功':'失败' }}</td>
+            <td>{{ l.log_item }}</td>
+            <td>{{ l.ip_address }}</td>
+            <td>{{ l.remarks }}</td>
+            <td>
+                <a href="##"  data-toggle="modal"
+                   data-url="log.info?log_time={{ l.log_time }}&admin_id={{ l.admin_id }}" data-target="#dataDetail">详情</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% include 'layout.page.twig' %}

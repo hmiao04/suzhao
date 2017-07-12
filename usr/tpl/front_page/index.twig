@@ -1,0 +1,205 @@
+{% extends "page.layout.twig" %}
+{% block block_class_name %}home-index{% endblock %}
+{% block app_content %}
+    <div class="contain">
+        <div class="nav1">
+            <div class="nav_content">
+            <ul>
+                <li style="margin-top: 2rem;text-align: left;width: 6rem"><a href="#">首页</a></li>
+                <li><a href="{{ SITE_URL }}/task/"><img src="{{ SITE_URL }}/assets/images/tmp/nav-1.png">找款式</a></li>
+                <li><a href="{{ SITE_URL }}/goods/"><img src="{{ SITE_URL }}/assets/images/tmp/nav-2.png">找材料</a></li>
+                <li style="margin-top: 2.2rem"><a href="{{ SITE_URL }}/company/">找工厂</a></li>
+                <li style="margin-top: 2.2rem"><a href="{{ SITE_URL }}/tuan/">猜拍</a></li>
+                <li style="margin-top: 2.2rem"><a href="{{ SITE_URL }}/picture/">特殊需求</a></li>
+            </ul>
+            </div>
+        </div>
+
+        <div class="rotation">
+            <img  style="width: 100%" src="{{ SITE_URL }}/assets/images/tmp/rotation.png">
+        </div>
+
+        <div class="theme" >
+                <div class="theme_item">
+                    <img src="{{ SITE_URL }}/assets/images/tmp/theme3.png" >
+                    <div class="aa">
+                        <a href="#"><span class="aa_font1">快速选款</span><br><span class="aa_font2">每日全球更新<br>当季流行款式</span></a>
+                    </div>
+                </div>
+                <div class="theme_item">
+                    <img  src="{{ SITE_URL }}/assets/images/tmp/theme1.png" >
+                    <div class="aa">
+                        <a href="#"><span class="aa_font1">无需找料</span><br><span class="aa_font2">自动匹配款式<br> 材料信息</span></a>
+                    </div>
+                </div>
+                <div class="theme_item">
+                    <img  src="{{ SITE_URL }}/assets/images/tmp/theme2.png" >
+                    <div class="aa">
+                        <a href="#"><span class="aa_font1">价格你定</span><br><span class="aa_font2">检验你是否<br>了解市场行情</span></a>
+                    </div>
+                </div>
+                <div class="theme_item">
+                    <img  src="{{ SITE_URL }}/assets/images/tmp/theme4.png" >
+                    <div class="aa">
+                        <a href="#"><span class="aa_font1">自由交易</span><br><span class="aa_font2">线上线下交易<br>方式自由选择</span></a></div>
+                </div>
+                <div class="theme_item">
+                    <img  src="{{ SITE_URL }}/assets/images/tmp/theme5.png" >
+                    <div class="aa">
+                        <a href="#"><span class="aa_font1">帮你完成</span><br><span class="aa_font2">你的各种奇葩<br>需求解决地</span></a>
+                    </div>
+                </div>
+        </div>
+
+        <div class="design-content">
+            <div style="float: left"><span class="aa_font1" style="font-size: 22px">款式优选 </span><span class="aa_font2">每日更新全球最新款式</span></div>
+            <div style="float: right"><span class="aa_font2"><a href="#">更多></a></span></div>
+        </div>
+
+        <div class="style">
+            <div class="style1" style="blockmargin-right: 1rem">
+                <div class="style1_left" style="width: 24.66rem">
+                    <p style="font-size: 16px;color: #333;margin-top: 25px">风格</p>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fg1.png"><a href="#">欧美</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fg2.png"><a href="#">韩版</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fg3.png"><a href="#">简约</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fg4.png"><a href="#">休闲</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fg5.png"><a href="#">复古</a></div>
+                    <div style="margin-right:0"><img  src="{{ SITE_URL }}/assets/images/tmp/fg6.png"><a href="#">民族</a></div>
+                </div>
+                <div class="style1_right" style="width: 24.66rem;padding-top: 25px">
+                    <p style="font-size: 16px;color: #333">款式</p>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/ks1.png"><a href="#">长靴</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/ks2.png"><a href="#">中筒靴</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/ks3.png"><a href="#">短靴</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/ks4.png"><a href="#">雪地靴</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/ks5.png"><a href="#">单鞋</a></div>
+                </div>
+            </div>
+            <div class="style2">
+                <div class="style2_left" style="margin-right: 1rem;width: 24rem">
+                    <div style="margin-bottom: 1rem" ><img  style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/trend-analysis.png"></div>
+                    <div ><img  style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/early-fall.png"></div>
+                </div>
+                <div class="style2_right" style="width: 24rem">
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/star.png"><a href="#">最新款式</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/net.png"><a href="#">推荐潮款</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fall-rec.png"><a href="#">明星同款</a></div>
+                    <div ><img  src="{{ SITE_URL }}/assets/images/tmp/fall-new.png"><a href="#">网红同款</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="style-content" style="height: 29.75rem;margin-top: 3.4rem">
+            <p style="font-size: 16px;color: #333;text-align: right">更多</p>
+            <div style="height: 27.5rem;width: 24rem"><img style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/hot.png"></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/hot1.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/hot2.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/hot3.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/hot4.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+        </div>
+        <div class="style-content" style="height: 29.75rem;margin-top: 3.4rem">
+            <p style="font-size: 16px;color: #333;text-align: right">更多</p>
+            <div style="height: 27.5rem;width: 24rem"><img style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/new.png"></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/new1.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/new2.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/new3.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/new4.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+        </div>
+        <div class="style-content" style="height: 29.75rem;margin-top: 3.4rem">
+            <p style="font-size: 16px;color: #333;text-align: right">更多</p>
+            <div style="height: 27.5rem;width: 24rem"><img style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/rec.png"></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/rec1.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/rec2.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/rec3.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+            <div ><img  src="{{ SITE_URL }}/assets/images/tmp/rec4.png"><a href="#">夏季新款，限量供应，9月必火！</a></div>
+        </div>
+
+        <div class="design-content" style="margin-top: 5rem">
+            <div style="float: left"><span class="aa_font1" style="font-size: 22px">本周推荐猜拍</span></div>
+            <div style="float: right"><span class="aa_font2"><a href="#">查看更多 ></a></span></div>
+        </div>
+        <div class="style" style="height: 32.08rem">
+            <div class="style1" style="margin: 1rem 1rem 1rem 0;height: 36.42rem">
+                <div style="background-color: #8a8a8a;width: 100%;border-radius: 8px;height: 30rem"><img style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/auction1.png"></div>
+                <div class="caipai"><ul>
+                        <li style="width: 12rem">限量：<span style="color: red;font-size: 20px">8888尺</span></li>
+                        <li>已猜拍：<span style="color: red;font-size: 20px">8888尺</span></li>
+                        <li><input class="search" style="margin-top: 0;height: 3.6rem" type="button" value="加入猜拍"></li>
+                    </ul></div>
+            </div>
+            <div class="style2" style="margin: 1rem 0 1rem 0;height: 36.42rem">
+                <div style="background-color: #8a8a8a;border-radius: 8px;width: 100%;height: 30rem"><img style="height: 100%;width: 100%" src="{{ SITE_URL }}/assets/images/tmp/auction2.png"></div>
+                <div class="caipai"><ul>
+                        <li style="width: 12rem">限量：<span style="color: red;font-size: 20px">8888尺</span></li>
+                        <li>已猜拍：<span style="color: red;font-size: 20px">8888尺</span></li>
+                        <li><input class="search" style="margin-top: 0;height: 3.6rem" type="button" value="加入猜拍"></li>
+                    </ul></div>
+            </div>
+        </div>
+
+        <div class="design-content" style="height: 37.17rem;margin-top: 1rem">
+            <div class="style1" style="margin-right: 2rem;width: 66rem;border-radius: 8px"><img  style="position: absolute;" src="{{ SITE_URL }}/assets/images/tmp/auction.png" ><input type="button" style="margin-top: 30.3%" class="req_btn" value="加入猜拍"><br>
+                <a   id="rul"  >猜拍规则</a>
+                <div class="rules"> <p style="margin: 1rem 0;font-size: 14px;color: #fff;line-height: 14px">每周二晚上20点活动上线（时间7天）</p><br>
+                    猜拍商品只显示最高出售价<br>
+                    每款限量出售<br>
+                    每款/每人一次出价机会<br>
+                    30分钟内付款<br>
+                    猜拍失败退款到支付宝账户（活动结束后通知）<br>
+                    送货上门（质量问题可在15天内退换）</div></div>
+            <div class="style2" style="width: 32rem;border-radius: 8px"><img  style="position: absolute;" src="{{ SITE_URL }}/assets/images/tmp/start-auction.png" ><input type="button" id="fqcp" style="margin-top: 81.7%;margin-left: 33%" class="req_btn" value="发起猜拍"></div>
+        </div>
+
+        <div class="design-content" style="height: 38.33rem;border-radius: 8px">
+                <img src="{{ SITE_URL }}/assets/images/tmp/traditional.png">
+        </div>
+
+
+        <div class="design-content" style="margin-top: 2.66rem">
+            <div style="float: left"><span class="aa_font1" style="font-size: 22px">精选材料</span><span class="aa_font2">工厂直销热门精品材料</span></div>
+            <div style="float: right"><span class="aa_font2"><a href="goods/">更多></a></span></div>
+        </div>
+        <div class="material" style="height: 58.67rem;width: 100rem;margin: 0 auto">
+            {% for g in goodsList %}
+                    <div >
+                        <img src="{{ res_url }}{{ g.main_image }}" />
+                        <a class="aa_font2" style="font-size: 14px" href="goods/detail.html?id={{ g.id }}">{{ g.title }}<br> 销量：<span style="color: red">88888</span>尺</a>
+                    </div>
+            {% endfor %}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather1.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather2.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather3.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather4.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather5.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather6.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather7.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+            {#<div ><img  src="{{ SITE_URL }}/assets/images/tmp/leather8.png"><a class="aa_font2" style="font-size: 14px" href="#">精致牛皮面料，纹路自然最优品质。<br> 销量：<span style="color: red">88888</span>尺</a></div>#}
+        </div>
+            <div class="design-content" style="height: 37.17rem;margin-top: 5rem">
+                <div class="style1" style="margin-right: 2rem;width: 64.8rem;" ><img style="border-radius: 8px;position: absolute;" src="{{ SITE_URL }}/assets/images/tmp/special-needs.png"><input type="button" class="req_btn" value="立即发起需求"></div>
+                <div class="style2" style="width: 32rem;border-radius: 8px;border: 1px solid #e6e6e6;padding-left: 1rem">
+                    <p><span style="font-size: 18px;color: #ff4733;text-align: left;font-weight: 700;line-height: 5rem">最新需求</span><span style="float: right;font-size: 12px;color: #999;line-height: 5rem"><a href="#">更多需求</a><img></span><br>
+                        <span class="aa_font1" style="line-height: 4rem">需要一个做镀金工艺的厂家！</span><br><span class="aa_font2">手里有一批鞋跟需要做镀金，寻求一个靠谱的厂家，这方面有专业的人士，可以提供一下相关信息。</span><br>
+                        <span class="aa_font1" style="line-height: 4rem">找一种特殊纹路的皮料</span><br><span class="aa_font2">在找一批特殊皮料，目前市场上此料缺货，手里有货或者有这方面资源的朋友联系一下。</span><br>
+                        <span class="aa_font1" style="line-height: 4rem">鞋子遇到了工艺制作的问题？</span><br><span class="aa_font2">现在研发一款鞋子，在工艺上出现了问题，目前没有解决办法，希望有专业人士能够提供靠谱的方案。</span><br>
+                        <span class="aa_font1" style="line-height: 4rem">鞋子工艺的问题？</span><br><span class="aa_font2">现在研发一款鞋子，在工艺上出现了问题，目前没有解决办法，希望有专业人士能够提供靠谱的方案。</span>
+                    </p>
+                </div>
+            </div>
+        <div style="width: 100%;height: auto;margin-top: 2.75rem">
+            <img style="width: 100% " src="{{ SITE_URL }}/assets/images/tmp/models.png" >
+        </div>
+
+        <div class="design-content" style="height: 15.7rem;margin: 4rem auto 6.25rem">
+            <ul>
+                <li class="bnav"><img  src="{{ SITE_URL }}/assets/images/tmp/settled.png" ><span class="aa_font1" >免费入驻</span><br> <span class="aa_font2" >注册一实名认证<br> 填写入驻资料<br> 审核（18小时内完成）<br> 审核通过开通店铺</span></li>
+                <li class="bnav"><img  src="{{ SITE_URL }}/assets/images/tmp/confrim.png" ><span class="aa_font1">实地认证</span> <br><span class="aa_font2">申请认证<br> 支付388元认证费用<br> 上门认证<br> 资料无误通过</span></li>
+                <li class="bnav"><img  src="{{ SITE_URL }}/assets/images/tmp/loan.png" ><span class="aa_font1">供应链贷款 </span><br><span class="aa_font2">入驻满6个月 <br>3个月采购/交易数据良好 <br>1-100贷款额度</span></li>
+                <li class="bnav"><img  src="{{ SITE_URL }}/assets/images/tmp/help.png" ><span class="aa_font1">扶持工厂</span> <br><span class="aa_font2">入驻满1年 <br>开发、做工、服务优质工厂 <br>连续5年给以<br> 资源、技术、资金扶持</span></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "member-layout.twig" %}
+{% block title %}账号设置{% endblock %}
+{% block app_title %}账号设置{% endblock %}
+{% block app_content %}
+    <div class="panel">
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">个人资料</h2>
+            </div>
+            <div class="panel-body">
+                <form action="" class="form-horizontal">
+                    <div class="pull-left user-avatar" style="width:200px;">
+                        <div style="width: 100px;margin: auto;position: relative;">
+                            <img style="width: 100px;height: 100px;" id="user-avatar-img"
+                                  src="{{ SITE_URL }}/resource/static/ups/a72ebf09ee3ed1c57df213af55a3c7f2.jpg?resize/w=150"
+                                  class="img-circle" alt="">
+                            <div class="process-upload">
+                                <div class="bg"></div>
+                                <div class="content"></div>
+                            </div>
+                            <input id="avatar_upload" name="avatar_upload" style="visibility: hidden"
+                                   type="file" multiple="false">
+                        </div>
+                        <div class="notice-text">图片格式为jpg、png<br>尺寸不能超过480*480</div>
+                    </div>
+                    <div class="pull-left form-inline">
+                        <div class="row">
+                            <label>用户名:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="row">
+                            <label>性别:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="row">
+                            <label>手机号码:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="row">
+                            <label>出生日期:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="row">
+                            <label></label>
+                            <button class="btn btn-save">保存</button>
+                            <button class="btn btn-text">取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">修改密码</h2>
+            </div>
+            <div class="panel-body form-inline">
+                <form action="" class="form-horizontal">
+                    <div class="row">
+                        <label>用户名:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label>性别:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label>手机号码:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label></label>
+                        <button class="btn btn-save">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">修改手机号</h2>
+            </div>
+            <div class="panel-body form-inline">
+                <form action="" class="form-horizontal">
+                    <div class="row">
+                        <label>更换号码:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label>验证码:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label></label>
+                        <button class="btn btn-save">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel-item">
+            <div class="panel-title">
+                <h2 class="pull-left">绑定微信</h2>
+            </div>
+            <div class="panel-body form-inline">
+                <form action="" class="form-horizontal">
+                    <div class="row">
+                        <label>验证码:</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label></label>
+                        <button class="btn btn-save">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="panel-item hidden">
+            <div class="panel-title">
+                <h2 class="pull-left">文件上传</h2>
+            </div>
+            <div class="panel-body form-inline">
+                <form action="avatar.upload" class="form-horizontal"
+                    enctype="multipart/form-data" method="post">
+                    <div class="row">
+                        <label>头像:</label>
+                        <input type="file" name="avatar" class="form-control">
+                    </div>
+                    <div class="row">
+                        <label></label>
+                        <button class="btn btn-save" type="submit">上传</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{{ SITE_URL }}/static/ycs/plugins/jquery.uploadify.js"></script>
+    <script>
+        $(function() {
+            $('#avatar_upload').uploadify({
+                formData        : {
+                    'timestamp' : '{{ timestamp }}',
+                    'token'     : '{{ token }}'
+                },
+                fileTypeDesc    : '图片文件',
+                fileTypeExts     : '*.jpg; *.png',
+                buttonText      : '上传头像',
+                width           : 100,
+                height          : 30,
+                multi          : false,
+                swf             : '{{ SITE_URL }}/static/ycs/plugins/uploadify.swf',
+                uploader        : '{{ SITE_URL }}/member/avatar.upload',
+                onUploadStart   : function(file){
+                    $('.process-upload').show();
+                },
+                onUploadSuccess : function(file, response, res) {
+                    $('.process-upload').hide();
+                    try{response = JSON.parse(response);}catch(e){}
+                    if(response){
+                        if(response['code'] != 0){
+                            alert(response['message']);return false;
+                        }
+                        $('#user-avatar-img').attr('src',response['data'] + '?resize/w=150');
+                        return;
+                    }
+                    alert('头像上传异常');
+                }
+            });
+            $('.ajax-form').on('submit',function(){
+                var frm = $(this);
+                $.ajax({
+                    url:frm.attr('action'),
+                    type:frm.attr('method'),
+                    data:frm.serializeArray(),
+                    success:function(){
+
+                    },
+                    error:function(){
+
+                    }
+                })
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

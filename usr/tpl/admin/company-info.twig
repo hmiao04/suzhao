@@ -1,0 +1,75 @@
+<table class="table table-no-border" style="width: 500px">
+    <tr>
+        <td class="text-right" width="120">商家名称:</td>
+        <td>{{ company.company_name }}</td>
+    </tr>
+    {% if operation %}
+        <tr>
+            <td class="text-right">实地认证:</td>
+            <td><span class="label {{ company.certification_status == 1 ?'bg-primary':(company.certification_status == 0?'bg-info':'bg-warning') }}">
+                {{ company.certification_status == 1?'正常':(company.certification_status == 0?'未认证':'申请中') }}</span></td>
+        </tr>
+        {% if company.certification_status != 0 %}
+            <tr>
+                <td class="text-right">认证手续费:</td>
+                <td>{{ company.certification_status == 1 or company.certification_status == 3 ? '已':'未' }}支付</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td class="text-right">认证操作:</td>
+            <td>
+                <select class="form-control change-ajax-post valid" name="certification_status" data-value="0"
+                        data-post-url="company.update?id={{ company.company_id }}" data-status-ele="#company_certification_status_{{ company.company_id }}" aria-invalid="false">
+                    <option value="1">正常</option>
+                    <option value="2" {{ company.certification_status == 2?'selected="selected"':'' }}>申请中(未支付)</option>
+                    <option value="3" {{ company.certification_status == 3?'selected="selected"':'' }}>申请中(已支付)</option>
+                    <option value="0" {{ company.certification_status == 0?'selected="selected"':'' }}>未认证</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right">商家入驻状态:</td>
+            <td><span class="label {{ company.status == 1?'bg-primary':'bg-warning' }}">
+                {{ company.status == 1?'正常':'申请中' }}</span></td>
+        </tr>
+        <tr>
+            <td class="text-right">入驻操作:</td>
+            <td>
+                <select class="form-control change-ajax-post valid" name="status" data-value="0"
+                        data-post-url="company.update?id={{ company.company_id }}" data-status-ele="#company_status_{{ company.company_id }}" aria-invalid="false">
+                    <option value="1">正常</option>
+                    <option value="2" {{ company.status == 2?'selected="selected"':'' }}>申请中</option>
+                </select>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td class="text-right">商家类型:</td>
+            <td>{{ company.company_type }}</td>
+        </tr>
+        <tr>
+            <td class="text-right">联系电话:</td>
+            <td>{{ company.company_phone }}</td>
+        </tr>
+        <tr>
+            <td class="text-right">联系传真:</td>
+            <td>{{ company.company_fax }}</td>
+        </tr>
+        <tr>
+            <td class="text-right">联系QQ:</td>
+            <td>{{ company.company_qq }}</td>
+        </tr>
+        <tr>
+            <td class="text-right">联系地址:</td>
+            <td>{{ company.company_address }}</td>
+        </tr>
+        <tr>
+            <td class="text-right">商家LOGO:</td>
+            <td>
+                <img style="max-width: 90%" src="{{ IMAGE_URL }}{{ company.company_image }}" alt="">
+                <p class="text-center"><a href="{{ IMAGE_URL }}{{ company.company_image }}"
+                                          title="商家LOGO" target="_blank">点击查看图片</a></p>
+            </td>
+        </tr>
+    {% endif %}
+</table>

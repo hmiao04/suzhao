@@ -1,0 +1,45 @@
+{% extends 'layout.twig' %}
+{% block title %}我的分享图片{% endblock %}
+{% block member_content %}
+    <div class="panel">
+        <div class="list-header">
+            <div class="pull-left">
+                {% for c in cateList %}
+                    <a href="?cate_id={{ c.id }}" class="{{ c.id == current_id?'selected':'' }}">{{ c.cate_name }}</a>
+                {% endfor %}
+            <br>
+                {% for m in modeList %}
+                    <a href="?mode_id={{ m.id }}" class="{{ m.id == current_mdid?'selected':'' }}">{{ m.mode_name }}</a>
+                {% endfor %}
+            </div>
+            <div class="pull-right">
+                <a href="upload-picture.html?cate_id={{ current_id }}">上传新图</a>
+            </div>
+            <br class="clear">
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                {% for pic in picture_list %}
+                    <div class="col-xs-6 col-md-3">
+                        <a href="../picture/show-{{ pic.id|id_encode }}.html" class="thumbnail" target="_blank">
+                            <img data-src="holder.js/100%x180" alt="100%x180"
+                                 src="{{ res_url }}{{ pic.main_image }}"
+                                 data-holder-rendered="true" style="height: 180px; width: 100%; display: block;">
+                            <a href="../picture/del_pic.html?picture_id={{ pic.id }}" class="ajax-post delete-link confirm">删除(上图)</a>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="data-table-paginate">
+                <div class="col-xs-6">
+                    <div class="data-table-info">总计 {{ totalPage }} 页  共 {{ totalCount }} 张图片</div>
+                </div>
+                <div class="col-xs-6">
+                    {{ pageString|raw }}
+                </div>
+                <br class="clear">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

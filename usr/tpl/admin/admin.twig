@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{% block title %}Manage{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link href="{{ cdn }}/assets/style/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ cdn }}/assets/ycs/theme.css" rel="stylesheet"/>
+    <link href="{{ SITE_URL }}/assets/ycs/ycs.css" rel="stylesheet"/>
+    <link href="{{ cdn }}/assets/ycs/css/font-awesome.min.css" rel="stylesheet"/>
+    <script src="{{ cdn }}/assets/style/js/jquery-2.2.0.js"></script>
+    <script src="{{ cdn }}/assets/style/js/jquery.validate.js"></script>
+    <script src="{{ cdn }}/assets/style/js/bootstrap.min.js"></script>
+    <script src="{{ cdn }}/assets/style/js/vue.js"></script>
+    <script src="{{ cdn }}/assets/ycs/common.js"></script>
+    <script>ycs.api_base = "{{ SITE_URL }}/admin/api";</script>
+    {% block head_end %}{% endblock %}
+</head>
+<body page-id="">
+<div id="app-element" class="app app-header-fixed">
+    <div class="app-header navbar">
+        <div class="navbar-header bg-danger" style="width: 200px;">
+            <button class="navbar-toggle collapsed" type="button" data-toggle="collapse"
+                    data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{ SITE_URL }}/admin/##" class="navbar-brand">后台管理系统</a>
+        </div>
+        <nav id="bs-navbar" class="collapse navbar-collapse">
+            <div class="navbar-form navbar-form-sm navbar-left shift">
+                <div class="form-group">
+                    <div class="input-group">
+                        <form class="search-form" action="view.system-search" method="get" style="width: 300px;">
+                            <input type="text" name="key"
+                                   class="form-control input-sm bg-light no-border rounded padder"
+                                   placeholder="搜索您所关心的内容...">
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-sm bg-light rounded">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                        </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden-xs hidden">
+                    <a ui-fullscreen="" class="full_screen">
+                        <i class="fa fa-expand fa-fw text"></i>
+                        <i class="fa fa-compress fa-fw text-active"></i>
+                    </a>
+                </li>
+                <li class="dropdown" dropdown="">
+                    <a href="" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                        <img src="{{ IMAGE_URL }}{{ userInfo.avatar }}" style="width:40px;height:40px;">
+                        <i class="on md b-white bottom"></i>
+                      </span>
+                        <span class="hidden-sm hidden-md">{{ userInfo.account }}</span> <b class="caret"></b>
+                    </a>
+                    <!-- dropdown -->
+                    <ul class="dropdown-menu animated fadeInRight w">
+                        <li>
+                            <a ui-sref="app.page.profile" href="{{ SITE_URL }}/admin/user-setting#">个人设置</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a ui-sref="access.signin" href="{{ SITE_URL }}/account/admin.logout">退出系统</a>
+                        </li>
+                    </ul>
+                    <!-- / dropdown -->
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="app-aside hidden-xs bg-dark pull-left" style="width: 200px;">
+        <div class="aside-wrap aside-auto-scroll" style="">
+            <div class="navi-wrap">
+                <nav class="navi" style="margin-top: 20px;">
+                    <ul class="nav">
+                        {% for mn in navDataList %}
+                        {% set isCurrent = false %}
+                        {% if mn.child %}
+                        {% for n in mn.child %}
+                            {% if navCurrent == n.res_url %}
+                                {% set isCurrent = true %}
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        <li class="{{ mn.active?'active':'' }}">
+                            <a href="{{ mn.child?'##':SITE_URL }}{{ mn.child?'':mn.res_url }}" class="auto nav-item">
+                                {% if mn.child %}
+                                <span class="pull-right text-muted">
+                                    <i class="fa fa-fw fa-angle-right text"></i><i class="fa fa-fw fa-angle-down text-active"></i>
+                                </span>
+                                {% endif %}
+                                <i class="{{ mn.res_icon }} icon text-success"></i>
+                                <span class="font-bold">{{ mn.res_name }}</span>
+                            </a>
+                            {% if mn.child %}
+                            <ul class="nav nav-sub dk">
+                                <li class="nav-sub-header"></li>
+                                {% for n in mn.child %}
+                                <li class="{{ n.active ? 'active':'' }}">
+                                    <a href="{{ SITE_URL }}{{ n.res_url }}" class="nav-sub-item">
+                                        <span>{{ n.res_name }}</span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="app-content app-manage-content">
+        {% block AppPath %}
+            <div class="bg-light lter b-b page-breadcrumbs">
+                <ul class="breadcrumb" style="background:none;padding: 10px;margin: 0;">
+                    <li>
+                        <i class="fa fa-home"></i>
+                    </li>
+                    {% for np in nav_path %}
+                    <li>
+                        <a href="{{ np.res_url and np.res_url != '#' ?SITE_URL:'#!/default' }}{{ np.res_url }}">{{ np.res_name }}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="active">{{ lastNavPath.res_name }}</li>
+                </ul>
+            </div>
+        {% endblock %}
+        {% block AppContent %}{% endblock %}
+        <div class="dialog-modal-wrapper">
+            <div tabindex="-1" role="dialog" id="modal-ajax" class="modal fade" modal-window="" animate="animate">
+                <div class="modal-dialog" style="">
+                    <div class="modal-content" modal-transclude="">
+                        <form class="validate save-res" action="" method="post">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">管理员信息</h4>
+                            </div>
+                            <div class="modal-body"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="app-footer">
+        <small class="text-muted">
+            <span>Powered by YCFramework Management System © 2014 - {{ RunTimes.datetime.year }}</span>
+            由 <a href="http://ycf.xiaoyan.me/" target="_blank">YCFramework </a>1.1.4强力驱动
+        </small>
+    </div>
+</div>
+<script src="{{ SITE_URL }}/assets/style/js/sz.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var appElement = $('#app-element').get(0);
+        $('.full_screen').on('click',function(){
+            var _me = $(this);
+            if(_me.hasClass('active')){
+                if (document.cancelFullScreen) {
+                    document.cancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                }
+                _me.removeClass('active');
+                return false;
+            }
+            if (appElement.requestFullscreen) {
+                appElement.requestFullscreen();
+            } else if (appElement.mozRequestFullScreen) {
+                appElement.mozRequestFullScreen();
+            } else if (appElement.webkitRequestFullscreen) {
+                appElement.webkitRequestFullscreen();
+            }
+            _me.addClass('active');
+            return false;
+        });
+        $('form.validate').validate();
+        $('a.nav-item').on('click',function(){
+            if($(this).parent().hasClass('active'))return false;
+            $('a.nav-item').parent().removeClass('active');
+            $(this).parent().addClass('active');
+            if($(this).parent().find('.nav-sub').length > 0) return false;
+        });
+
+        $('.fileinput').each(function() {
+            var wp = $(this), img = wp.find('img.preview-img'),
+                    select = wp.find('span.fileinput-new'),
+                    change = wp.find('span.fileinput-exists'),
+                    remove = wp.find('a.fileinput-exists'),
+                    file = wp.find("[type=file]"),
+                    trigger = wp.find('[data-trigger="fileinput"]'),
+                    notice = $('<div class="text-notice"><span>点击选择图片</span></div>').insertBefore(img).hide();
+            wp.on('change', function () {
+                select.hide();
+                change.show();
+            });
+            trigger.on('click.bs.fileinput',function(){
+                file.trigger('click');return false;
+            });
+            file.on('change.bs.fileinput', $.proxy(this.change, this))
+
+            if (img.hasClass('has-pic') || file.attr('data-value')) {
+                select.hide();
+                change.show();
+            }
+            img.parent().on('mouseover',function(){
+                notice.show();
+            }).on('mouseout',function(){
+                notice.hide();
+            })
+
+            file.on('change',function(){
+                var fs = this.files;
+                var reader = new FileReader();
+                var element = this.$element;
+
+                var file = fs[0];
+                reader.onload = function (re) {
+                    var $img = img.attr('src', re.target.result);
+                };
+
+                reader.readAsDataURL(file);
+                wp.trigger('change');
+            });
+
+        });
+
+        $(document).on('click.fileinput.data-api', '[data-provides="fileinput"]',function(e){
+            var $target = $(e.target).closest('[data-dismiss="fileinput"],[data-trigger="fileinput"]');
+            if ($target.length > 0) {
+                e.preventDefault();
+                $target.trigger('click.bs.fileinput');
+            }
+        });
+        $(document).on('click','a',function(){
+            var me = $(this),ajaxWrapper = me.parents('.ajax-data-wrapper');
+            if(me.attr('data-toggle') && me.attr('data-toggle') == 'modal') return;
+            if(me.hasClass('no-ajax')){return true;}
+            if(me.hasClass('ajax-post')){
+                ajaxPostHandler.call(this);return false;
+            }
+            if(me.hasClass('ycs-link-pager')){
+                if(ajaxWrapper.length == 0){
+                    return true;
+                }
+                ajaxWrapper.ajaxLoadByPage(me.attr('href'));
+                return false;
+            }
+        });
+        var uploadUrl = '{{ SITE_URL }}/file/upload?action=picture&cate_id=0&file_key=file',res_url = '{{ res_url }}';
+        $(document).on('mouseover','.change-image',function(){
+            var p = $(this);
+            if(p.hasClass('init-done'))return true;
+            var bg = $('<a class="bg-w"><span>点击更换图片</span></a>').appendTo(p);
+            p.addClass('init-done');
+            var _id = 'file_' + Math.random().toString().replace('.','');
+            var frm = $('<div><form novalidate="novalidate"><input type="file" name="file" class="fill-parent" /></form></div>').appendTo(p);
+            var _file = frm.find(':file');
+            frm.find('form').attr('action',uploadUrl);
+            var update_url = p.attr('data-upload-success'),update_name = p.attr('data-upload-name');
+            _file.attr('id',_id).change(function() {
+                var file = this.files[0]; //假设file标签没打开multiple属性，那么只取第一个文件就行了
+                var formData = new FormData(frm.find('form')[0]);
+                modalLoading.show('上传中...');
+                $.ajax({
+                    url: uploadUrl,type: "POST",data: formData,
+                    xhr: function(){ //获取ajaxSettings中的xhr对象，为它的upload属性绑定progress事件的处理函数
+                       var myXhr = $.ajaxSettings.xhr();
+                        if(myXhr.upload){
+                            myXhr.upload.addEventListener('progress',function(e){
+                                if (e.lengthComputable) {
+                                    var percent = e.loaded/e.total*100;
+                                    console.log(e.loaded + "/" + e.total+" bytes. " + percent.toFixed(2) + "%");
+                                }
+                            }, false);
+                        }
+                        return myXhr; //xhr对象返回给jQuery使用
+                    },
+                    success: function(ret){
+                        if(ret['code'] == 0){
+                            var postData = {},picUrl = ret['data'];
+                            postData[update_name] = picUrl;
+                            $.post(update_url,postData,function(ret){
+                                modalLoading.hide();
+                                if(ret['code'] == 0){
+                                    p.find('img').attr('src',res_url + picUrl);
+                                }else{
+                                    modalLoading.msg(ret['message'],1500);
+                                }
+                            },'json');
+                        }else{
+                            modalLoading.hide();
+                            modalLoading.msg(ret['message'],1500);
+                        }
+                    },
+                    error:function(){
+                        modalLoading.msg('网络异常,上传失败...',1500);
+                    },
+                    contentType: false, //必须false才会自动加上正确的Content-Type
+                    processData: false //必须false才会避开jQuery对 formdata 的默认处理
+                });
+            });
+        });
+        $(document).on('submit','form.ajax-post',function(e){
+            var frm = $(this),submitBtn = frm.find('[type=submit]');
+            if (frm.valid()) {
+                var loading = $.showLoadingText.call(submitBtn);
+                ycs.post(frm.attr('action'), frm.serializeArray(), function (ret) {
+                    loading.close();
+                    if (ret['code'] == 0) {
+                        location.reload();
+                    } else {
+                        ycs.form.processAjax(ret,frm);
+                    }
+                }, 'json').error(function(){
+                    loading.close();
+                    alert('操作失败');
+                });
+            }
+            return false;
+        });
+        $(document).on('change','select.change-ajax-post',function(e){
+            var ele = $(this),v = ele.val(),k = ele.attr('name'),ov = ele.attr('data-value'),
+                    opt = ele.find(':selected'),op_str = opt.text(),change_ele = ele.attr('data-status-ele');
+            if(ele.attr('data-post-url')){
+                var _ret = {};
+                _ret[k] = v;
+                ele.attr('disabled','disabled');
+                var ld = ycs.createLoadingText(function(str,ret){
+                    opt.text(op_str + str);
+                });
+                $.post(ele.attr('data-post-url'),_ret,function(ret){
+                    ld.stop();
+                    ele.removeAttr('disabled');
+                    if(ret['code'] == 0){
+                        ele.attr('data-value',v);
+                        if(change_ele){
+                            $(change_ele).html(op_str);
+                        }
+                    }else{
+                        if(ov) ele.val(ov);
+                        alert(ret['message'])
+                    }
+                },'json').error(function(){
+                    ld.stop();
+                    ele.removeAttr('disabled');
+                    if(ov) ele.val(ov);
+                    alert('操作失败请重试!');
+                });
+            }
+            return false;
+        });
+        $(document).on('submit','form.ajax-query-form',function(){
+            var me = $(this);
+            var ajaxUrl = me.attr('action');
+            var target = me.attr('target');
+            var params = {};
+            var searchData = me.serializeArray();
+            $(searchData).each(function(i,data){
+                if(data['name'] && data['value']){
+                    if(params[data['name']]){
+                        params[data['name']] += ','+data['value'];
+                    }else{
+                        params[data['name']] = data['value'];
+                    }
+                }
+            });
+            params = $.param(params);
+            ajaxUrl += (params ? '&' + params :'') ;
+            $(target).ajaxLoadByPage(ajaxUrl);
+            return false;
+        });
+        var modal_load = function(modal,_title,url){
+            var ld_ele = _title ? modal.find('.modal-body') : modal.find('.modal-title');
+            if(_title){
+                modal.find('.modal-title').html(_title);
+            }
+            var loading = ycs.createLoadingText(function(str,l){
+                ld_ele.html('正在加载' + str);
+            });
+            modal.attr('data-url',url);
+            $.get(url, function (source) {
+                loading.stop();
+                if(typeof(source) == 'object' && source['code'] != 0){
+                    modal.find('.modal-body').html(source['message']);
+                    return false;
+                }
+                if(_title) modal.find('.modal-title').text(_title);
+                else modal.find('.modal-header').hide();
+                modal.find('.modal-body').html(source);
+            }).error(function(){
+                loading.stop();
+                if(_title) modal.find('.modal-title').text(_title);
+                else modal.find('.modal-header').hide();
+                modal.find('.modal-body').html('加载数据失败');
+            });
+        };
+        $('#modal-ajax').on('show.bs.modal', function (e) {
+            var modal = $(this),btnClose = modal.find('button.close');
+            if(!e.relatedTarget){
+                if(!modal.attr('data-url')) return;
+                modal_load(modal,null,modal.attr('data-url'));
+                return;
+            }
+            var link = $(e.relatedTarget);
+            if(link.hasClass('allow-close')){
+                btnClose.show();
+            }else btnClose.hide();
+            if(link.hasClass('ajax-load')){
+                modal.find('.modal-header').show();
+
+                var _title = link.attr('data-modal-title')?link.attr('data-modal-title'):null;
+                modal_load(modal,_title,link.attr('data-url'));
+            }
+        });
+
+    });
+</script>
+{% block last_script %}{% endblock %}
+{% block end_body %}{% endblock %}
+</body>
+</html>
